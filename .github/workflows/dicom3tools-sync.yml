@@ -1,0 +1,109 @@
+name: dicom3tools Source Sync
+
+on:
+  schedule:
+    # 6am Eastern Time (adjust UTC hour for DST as needed)
+    - cron: '0 10 * * *'
+
+jobs:
+  update-dicom3tools:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.x'
+
+      - name: Install dependencies
+        run: |
+          sudo apt-get update && sudo apt-get install -y wget bzip2
+          python -m pip install beautifulsoup4 requests
+
+      - name: Get latest source release link
+        id: get_link
+        run: |
+          python <<EOF
+          import re
+          import requests
+          from bs4 import BeautifulSoup
+
+          url = "https://www.dclunie.com/dicom3tools/workinprogress/index.html"
+          resp = requests.get(url)
+          soup = BeautifulSoup(resp.text, "html.parser")
+
+          # Find all links matching the pattern
+          links = []
+          pattern = re.compile(r'dicom3tools_1.00.snapshot\.(\d{14})\.tar\.bz2')
+          for a in soup.find_all('a', href=True):
+              match = pattern.search(a['href'])
+              if match:
+                  links.append((a['href'], match.group(1)))
+
+          if not links:
+              raise Exception("No matching files found.")
+
+          # Sort by date string (lexicographically correct for YYYYMMDDHHMMSS)
+          latest = max(links, key=lambda x: x[1])
+          filename = latest[0].split('/')[-1]
+          full_url = f"https://www.dclunie.com/dicom3tools/workinprogress/{filename}"
+
+          print(f"::set-output name=link::{full_url}")
+          print(f"::set-output name=filename::{filename}")
+          EOF
+
+      - name: Read current version
+        id: version
+        run: |
+          if [ -f VERSION.txt ]; then
+            current_version=$(cat VERSION.txt)
+          else
+            current_version=""
+          fi
+          echo "current_version=$current_version" >> $GITHUB_OUTPUT
+
+      - name: Compare versions
+        id: compare
+        run: |
+          new_version="${{ steps.get_link.outputs.filename }}"
+          current_version="${{ steps.version.outputs.current_version }}"
+          if [ "$new_version" = "$current_version" ]; then
+            echo "Up-to-date. Exiting."
+            exit 0
+          fi
+
+      - name: Download and extract new release
+        if: steps.compare.outcome == 'success'
+        run: |
+          mkdir ../new_release
+          wget "${{ steps.get_link.outputs.link }}" -O ../new_release/source.tar.bz2
+          tar -xjf ../new_release/source.tar.bz2 -C ../new_release
+          dir_name = $(ls ../new_release)
+          mv ../new_release/$dir_name/* ../new_release
+          rm ../new_release/source.tar.bz2
+          rm -rf ../new_release/$dir_name
+
+      - name: Replace repository content with new release
+        if: steps.compare.outcome == 'success'
+        run: |
+          shopt -s dotglob
+          find . -mindepth 1 -maxdepth 1 ! -name '.git' ! -name '.github' ! -name 'README.md' -exec rm -rf {} +
+          mv ../new_release/* .
+          rmdir ../new_release || true
+
+      - name: Update VERSION.txt
+        if: steps.compare.outcome == 'success'
+        run: |
+          echo "${{ steps.get_link.outputs.filename }}" > VERSION.txt
+
+      - name: Commit and create pull request
+        if: steps.compare.outcome == 'success'
+        uses: peter-evans/create-pull-request@v7
+        with:
+          commit-message: "Update dicom3tools source to ${{ steps.get_link.outputs.filename }}"
+          title: "Update dicom3tools source to ${{ steps.get_link.outputs.filename }}"
+          body: "Automated update to the latest dicom3tools source release."
+          branch: "update-dicom3tools-${{ steps.get_link.outputs.filename }}"
+
