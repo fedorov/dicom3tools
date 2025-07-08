@@ -1,6 +1,7 @@
 name: dicom3tools Source Sync
 
 on:
+  workflow_dispatch:
   schedule:
     # 6am Eastern Time (adjust UTC hour for DST as needed)
     - cron: '0 10 * * *'
