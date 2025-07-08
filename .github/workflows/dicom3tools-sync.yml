@@ -82,9 +82,9 @@ jobs:
           wget "${{ steps.get_link.outputs.link }}" -O ../new_release/source.tar.bz2
           tar -xjf ../new_release/source.tar.bz2 -C ../new_release
           dir_name = $(ls ../new_release)
-          mv ../new_release/$dir_name/* ../new_release
+          mv ../new_release/"$dir_name"/* ../new_release
           rm ../new_release/source.tar.bz2
-          rm -rf ../new_release/$dir_name
+          rm -rf ../new_release/"$dir_name"
 
       - name: Replace repository content with new release
         if: steps.compare.outcome == 'success'
