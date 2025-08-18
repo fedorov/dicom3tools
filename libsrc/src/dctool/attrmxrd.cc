@@ -1004,6 +1004,16 @@ cerr << ")"
 				if (vl == 0xffffffff) {
 //cerr << "ReadableAttributeList::read Pixel Data has undefined length VL" << endl;
 					if (stream->getTransferSyntaxInUse()->isEncapsulated()) {
+						if (!isOtherByteOrUnspecifiedVR(vr)) {
+							if (newformat) {
+								errorstream << String_Use(EMsgDCFT(MMsgDC(IllegalVRForEncapsulatedCompressedPixelData),TagFromName(PixelData)))
+											<< " - [" << vr << "] - " << MMsgDC(Expected) << " [OB]" << endl;
+							}
+							else {
+								errorstream << EMsgDC(IllegalVRForEncapsulatedCompressedPixelData)
+											<< " - <" << vr << "> - " << MMsgDC(Expected) << " <OB>" << endl;
+							}
+						}
 						a=new OtherUnspecifiedLargeAttributeEncapsulated(
 							tag,
 							*stream,

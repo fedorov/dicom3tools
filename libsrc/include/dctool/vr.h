@@ -38,6 +38,8 @@ static bool isUnlimitedCharactersVR(const char *vr) { return vr && vr[0]=='U' &&
 
 static bool isUnlimitedTextVR(const char *vr) { return vr && vr[0]=='U' &&  vr[1]=='T'; }
 
+static bool isOtherByteOrUnspecifiedVR(const char *vr) { return vr && vr[0]=='O' && (vr[1]=='B' || vr[1]=='X'); }
+
 static bool isOtherByteOrWordOrUnspecifiedVR(const char *vr) { return vr && vr[0]=='O' && (vr[1]=='B' || vr[1]=='W' || vr[1]=='X'); }
 
 static bool isOtherByteOrLongOrWordOrFloatOrDoubleVR(const char *vr) { return vr && vr[0]=='O' && (vr[1]=='B' || vr[1]=='D' || vr[1]=='F' || vr[1]=='L' || vr[1]=='V' || vr[1]=='W' || vr[1]=='X'); }

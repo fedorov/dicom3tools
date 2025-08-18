@@ -3093,11 +3093,12 @@ Condition="PlanePositionSequenceNotInSharedFunctionalGroupSequence"
 ConditionEnd
 
 Condition="PlanePositionSequenceNotInSharedFunctionalGroupSequenceAndNotSlide"
-	Element="PlanePositionSequence"				Modifier="Not" ElementPresentInPathFromRoot="SharedFunctionalGroupsSequence"
+	Element="PlanePositionSequence"				Modifier="Not"	ElementPresentInPathFromRoot="SharedFunctionalGroupsSequence"
 	(
-		Element="PlanePositionSlideSequence"					  ElementPresentInPathFromRootFirstItem="PerFrameFunctionalGroupsSequence"
-		Element="PlanePositionSlideSequence"		Operator="Or" ElementPresentInPathFromRoot="SharedFunctionalGroupsSequence"
+		Element="PlanePositionSlideSequence"					ElementPresentInPathFromRootFirstItem="PerFrameFunctionalGroupsSequence"
+		Element="PlanePositionSlideSequence"	Operator="Or"	ElementPresentInPathFromRoot="SharedFunctionalGroupsSequence"
 	) Operator="And" Modifier="Not"
+	Element="ImageOrientationSlide"				Operator="And"	Modifier="Not"	ElementPresentInRoot=""
 ConditionEnd
 
 Condition="PlanePositionSequenceNotInSharedFunctionalGroupSequenceAndDerivationImageMacroNotPresentInEitherMBPOIfNotSlideRelative"
@@ -3131,11 +3132,12 @@ Condition="PlanePositionSequenceNotInPerFrameFunctionalGroupSequence"
 ConditionEnd
 
 Condition="PlanePositionSequenceNotInPerFrameFunctionalGroupSequenceAndNotSlide"
-	Element="PlanePositionSequence"				Modifier="Not" ElementPresentInPathFromRootFirstItem="PerFrameFunctionalGroupsSequence"
+	Element="PlanePositionSequence"				Modifier="Not"	ElementPresentInPathFromRootFirstItem="PerFrameFunctionalGroupsSequence"
 	(
-		Element="PlanePositionSlideSequence"					  ElementPresentInPathFromRootFirstItem="PerFrameFunctionalGroupsSequence"
-		Element="PlanePositionSlideSequence"		Operator="Or" ElementPresentInPathFromRoot="SharedFunctionalGroupsSequence"
+		Element="PlanePositionSlideSequence"					ElementPresentInPathFromRootFirstItem="PerFrameFunctionalGroupsSequence"
+		Element="PlanePositionSlideSequence"	Operator="Or"	ElementPresentInPathFromRoot="SharedFunctionalGroupsSequence"
 	) Operator="And" Modifier="Not"
+	Element="ImageOrientationSlide"				Operator="And"	Modifier="Not"	ElementPresentInRoot=""
 ConditionEnd
 
 Condition="PlanePositionSequenceNotInPerFrameFunctionalGroupSequenceAndDerivationImageMacroNotPresentInEitherMBPOIfNotSlideRelative"
@@ -3229,11 +3231,12 @@ Condition="PlaneOrientationSequenceNotInSharedFunctionalGroupSequence"
 ConditionEnd
 
 Condition="PlaneOrientationSequenceNotInSharedFunctionalGroupSequenceAndNotSlide"
-	Element="PlaneOrientationSequence"			Modifier="Not" ElementPresentInPathFromRoot="SharedFunctionalGroupsSequence"
+	Element="PlaneOrientationSequence"			Modifier="Not"	ElementPresentInPathFromRoot="SharedFunctionalGroupsSequence"
 	(
-		Element="PlanePositionSlideSequence"					  ElementPresentInPathFromRootFirstItem="PerFrameFunctionalGroupsSequence"
-		Element="PlanePositionSlideSequence"		Operator="Or" ElementPresentInPathFromRoot="SharedFunctionalGroupsSequence"
+		Element="PlanePositionSlideSequence"					ElementPresentInPathFromRootFirstItem="PerFrameFunctionalGroupsSequence"
+		Element="PlanePositionSlideSequence"	Operator="Or"	ElementPresentInPathFromRoot="SharedFunctionalGroupsSequence"
 	) Operator="And" Modifier="Not"
+	Element="ImageOrientationSlide"				Operator="And"	Modifier="Not"	ElementPresentInRoot=""
 ConditionEnd
 
 Condition="PlaneOrientationSequenceNotInSharedFunctionalGroupSequenceAndDerivationImageMacroNotPresentInEitherMBPOIfNotSlideRelative"
@@ -3267,11 +3270,12 @@ Condition="PlaneOrientationSequenceNotInPerFrameFunctionalGroupSequence"
 ConditionEnd
 
 Condition="PlaneOrientationSequenceNotInPerFrameFunctionalGroupSequenceAndNotSlide"
-	Element="PlaneOrientationSequence"			Modifier="Not" ElementPresentInPathFromRootFirstItem="PerFrameFunctionalGroupsSequence"
+	Element="PlaneOrientationSequence"			Modifier="Not"	ElementPresentInPathFromRootFirstItem="PerFrameFunctionalGroupsSequence"
 	(
-		Element="PlanePositionSlideSequence"					  ElementPresentInPathFromRootFirstItem="PerFrameFunctionalGroupsSequence"
-		Element="PlanePositionSlideSequence"		Operator="Or" ElementPresentInPathFromRoot="SharedFunctionalGroupsSequence"
+		Element="PlanePositionSlideSequence"					ElementPresentInPathFromRootFirstItem="PerFrameFunctionalGroupsSequence"
+		Element="PlanePositionSlideSequence"	Operator="Or"	ElementPresentInPathFromRoot="SharedFunctionalGroupsSequence"
 	) Operator="And" Modifier="Not"
+	Element="ImageOrientationSlide"				Operator="And"	Modifier="Not"	ElementPresentInRoot=""
 ConditionEnd
 
 Condition="PlaneOrientationSequenceNotInPerFrameFunctionalGroupSequenceAndDerivationImageMacroNotPresentInEitherMBPOIfNotSlideRelative"

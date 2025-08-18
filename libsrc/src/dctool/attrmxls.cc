@@ -70,7 +70,7 @@ loopOverListsInSequencesWithLog(Attribute *a,bool verbose,bool newformat,bool al
 		int n;
 		if ((n=a->getLists(&al)) > 0) {
 //cerr << "ManagedAttributeList::loopOverListsInSequencesWithLog - number of items = " << n << endl;
-			if (tag == TagFromName(PerFrameFunctionalGroupsSequence) && !allpffgitems) {
+			if ((tag == TagFromName(PerFrameFunctionalGroupsSequence) || tag == TagFromName(ReferencedImageNavigationSequence)) && !allpffgitems) {
 //cerr << "ManagedAttributeList::loopOverListsInSequencesWithLog - is PerFrameFunctionalGroupsSequence so just do first item" << endl;
 				// just do first item
 				if (!(*func)(*al[0],verbose,newformat,allpffgitems,log)) succeeded=false;
@@ -99,7 +99,7 @@ loopOverListsInSequencesWithSpecificCharacterSetInfoAndLog(Attribute *a,Specific
 		AttributeList **al;
 		int n;
 		if ((n=a->getLists(&al)) > 0) {
-			if (tag == TagFromName(PerFrameFunctionalGroupsSequence) && !allpffgitems) {
+			if ((tag == TagFromName(PerFrameFunctionalGroupsSequence) || tag == TagFromName(ReferencedImageNavigationSequence)) && !allpffgitems) {
 				if (!(*func)(*al[0],specificCharacterSetInfo,verbose,newformat,allpffgitems,log)) succeeded=false;
 			}
 			else {

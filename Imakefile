@@ -39,7 +39,8 @@ ARCHIVEWINEXEFILES = \
 	appsrc/dcfile/dcdirdmp.exe \
 	appsrc/dcfile/dctoraw.exe \
 	appsrc/dcfile/dccmp.script \
-	appsrc/dcfile/dcdiff.script
+	appsrc/dcfile/dcdiff.script \
+	appsrc/dcfile/dcinfo.exe
 
 ARCHIVEMACEXENAME = dicom3tools_macexe
 ARCHIVEMACEXEFILES = \
@@ -58,7 +59,8 @@ ARCHIVEMACEXEFILES = \
 	appsrc/dcfile/dcdirdmp \
 	appsrc/dcfile/dctoraw \
 	appsrc/dcfile/dccmp.script \
-	appsrc/dcfile/dcdiff.script
+	appsrc/dcfile/dcdiff.script \
+	appsrc/dcfile/dcinfo
 
 LINKTOIMAGEDIR = ../dctool.support/images
 LINKTOTESTDIR = ../dctool.support/test

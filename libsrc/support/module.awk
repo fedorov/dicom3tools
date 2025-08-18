@@ -290,8 +290,7 @@ NR==1	{
 			print "\t\tif ((n="sequence "->getLists(&array)) > 0) {"
 			if (role == "verify") {
 				indentcode(sequencenestingdepth)
-				#print "\t\t\tn = (allpffgitems || " sequence "->getTag() != TagFromName(PerFrameFunctionalGroupsSequence)) ? n : 1;"
-				if (sequence == "PerFrameFunctionalGroupsSequence") {
+				if (sequence == "PerFrameFunctionalGroupsSequence" || sequence == "ReferencedImageNavigationSequence") {
 					print "\t\t\tif (!allpffgitems) n=1;"
 				}
 			}

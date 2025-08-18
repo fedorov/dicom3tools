@@ -1,4 +1,4 @@
-.TH DCIODVFY 1 "25 May 2025" "DICOM PS3" "DICOM PS3 - Validate DICOM objects"
+.TH DCIODVFY 1 "25 May 2026" "DICOM PS3" "DICOM PS3 - Validate DICOM objects"
 .SH NAME
 dciodvfy \- ACR/NEMA DICOM PS3 ... DICOM PS3 - Validate DICOM objects
 .SH SYNOPSIS
@@ -93,7 +93,8 @@ Show the name of the file supplied in the arguments; a hyphen will be reported i
 .B \-allpffgitems
 .RS
 Validate every Item of Per-Frame Functional Groups Sequence, rather than just the first item (default
-is to validate only first Item to avoid duplicative output when same error repeated in every Item)
+is to validate only first Item to avoid duplicative output when same error repeated in every Item).
+Also applies to Referenced Image Navigation Sequence.
 .RE
 .SH ENVIRONMENT
 .LP

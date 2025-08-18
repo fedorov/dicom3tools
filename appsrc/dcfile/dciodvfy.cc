@@ -143,7 +143,7 @@ loopOverListsInSequencesWithLog(Attribute *a,bool verbose,bool newformat,bool al
 		AttributeList **al;
 		int n;
 		if ((n=a->getLists(&al)) > 0) {
-			if (tag == TagFromName(PerFrameFunctionalGroupsSequence) && !allpffgitems) {
+			if ((tag == TagFromName(PerFrameFunctionalGroupsSequence) || tag == TagFromName(ReferencedImageNavigationSequence)) && !allpffgitems) {
 				// just do first item
 				if (!(*func)(*al[0],verbose,newformat,allpffgitems,log)) succeeded=false;
 			}
@@ -169,7 +169,7 @@ loopOverListsInSequencesWithRootListAndLog(AttributeList &rootlist,Attribute *a,
 		AttributeList **al;
 		int n;
 		if ((n=a->getLists(&al)) > 0) {
-			if (tag == TagFromName(PerFrameFunctionalGroupsSequence) && !allpffgitems) {
+			if ((tag == TagFromName(PerFrameFunctionalGroupsSequence) || tag == TagFromName(ReferencedImageNavigationSequence)) && !allpffgitems) {
 				// just do first item
 				if (!(*func)(rootlist,*al[0],verbose,newformat,allpffgitems,log)) succeeded=false;
 			}
@@ -3326,6 +3326,97 @@ checkConsistencyOfTiledImageGeometry(AttributeList &list,bool verbose,bool newfo
 						<< endl;
 				}
 				success=false;
+			}
+		}
+		// (000626)
+		{
+			Float64 vPixelSpacing_BetweenRows = 0;
+			Float64 vPixelSpacing_BetweenColumns = 0;
+			Attribute *aSharedFunctionalGroupsSequence = list[TagFromName(SharedFunctionalGroupsSequence)];
+			if (aSharedFunctionalGroupsSequence && aSharedFunctionalGroupsSequence->isSequence() && !aSharedFunctionalGroupsSequence->isEmpty()) {
+				AttributeList **aSharedFunctionalGroupsSequenceLists;
+				int nSharedFunctionalGroupsSequenceItems;
+				if ((nSharedFunctionalGroupsSequenceItems=aSharedFunctionalGroupsSequence->getLists(&aSharedFunctionalGroupsSequenceLists)) == 1) {
+					AttributeList *sharedList = aSharedFunctionalGroupsSequenceLists[0];
+					Attribute *aPixelMeasuresSequence = (*sharedList)[TagFromName(PixelMeasuresSequence)];
+					if (aPixelMeasuresSequence && aPixelMeasuresSequence->isSequence() && !aPixelMeasuresSequence->isEmpty()) {
+						AttributeList **pixelMeasuresSequenceLists;
+						int nPixelMeasuresSequenceItems;
+						if ((nPixelMeasuresSequenceItems=aPixelMeasuresSequence->getLists(&pixelMeasuresSequenceLists)) == 1) {
+							AttributeList *pixelMeasuresSequenceItemList = pixelMeasuresSequenceLists[0];
+							Attribute *aPixelSpacing=(*pixelMeasuresSequenceItemList)[TagFromName(PixelSpacing)];
+							if (aPixelSpacing && aPixelSpacing->getVL() >= 2) {
+								(void)aPixelSpacing->getValue(0,vPixelSpacing_BetweenRows);
+								(void)aPixelSpacing->getValue(1,vPixelSpacing_BetweenColumns);
+							}
+						}
+					}
+				}
+			}
+//cerr << "checkConsistencyOfTiledImageGeometry(): vPixelSpacing_BetweenRows = " << vPixelSpacing_BetweenRows << " vPixelSpacing_BetweenColumns = " << vPixelSpacing_BetweenColumns << endl;
+			if (vPixelSpacing_BetweenRows > 0 && vPixelSpacing_BetweenColumns > 0) {
+				Attribute *aImagedVolumeWidth=list[TagFromName(ImagedVolumeWidth)];
+				Float64 vImagedVolumeWidth = 0;
+				{
+					if (aImagedVolumeWidth) {
+						(void)aImagedVolumeWidth->getValue(0,vImagedVolumeWidth);
+					}
+				}
+				Attribute *aImagedVolumeHeight=list[TagFromName(ImagedVolumeHeight)];
+				Float64 vImagedVolumeHeight = 0;
+				{
+					if (aImagedVolumeHeight) {
+						(void)aImagedVolumeHeight->getValue(0,vImagedVolumeHeight);
+					}
+				}
+				if (vImagedVolumeWidth > 0 && vImagedVolumeHeight > 0) {
+					Float64 computedImagedVolumeWidth  = vTotalPixelMatrixColumns * vPixelSpacing_BetweenColumns;
+					Float64 computedImagedVolumeHeight = vTotalPixelMatrixRows    * vPixelSpacing_BetweenRows;
+//cerr << "checkConsistencyOfTiledImageGeometry(): vImagedVolumeWidth = " << vImagedVolumeWidth << " computedImagedVolumeWidth = " << computedImagedVolumeWidth << endl;
+					Float64 widthRelativeDifference = fabs(computedImagedVolumeWidth/vImagedVolumeWidth - 1.0);
+//cerr << "checkConsistencyOfTiledImageGeometry(): fabs(computedImagedVolumeWidth/vImagedVolumeWidth - 1.0) = " << widthRelativeDifference << endl;
+					if (widthRelativeDifference > 0.001) {
+						if (newformat) {
+							log << WMsgDCF(MMsgDC(ImagedVolumeWidthInconsistentWithTotalPixelMatrixColumnsAndPixelSpacing),aImagedVolumeWidth)
+								<< " = <" << vImagedVolumeWidth
+								<< " > - expected " << computedImagedVolumeWidth
+								<< " for " << vTotalPixelMatrixColumns << " columns"
+								<< ", " << vPixelSpacing_BetweenColumns << " PixelSpacing between columns"
+								<< endl;
+						}
+						else {
+							log << WMsgDC(NumberOfFramesDoesNotMatchExpectedValueForTiledTotalPixelMatrix)
+								<< " got " << vImagedVolumeWidth
+								<< " expected " << computedImagedVolumeWidth
+								<< " for " << vTotalPixelMatrixColumns << " columns"
+								<< ", " << vPixelSpacing_BetweenColumns << " PixelSpacing between columns"
+								<< endl;
+						}
+						//success=false;
+					}
+//cerr << "checkConsistencyOfTiledImageGeometry(): vImagedVolumeHeight = " << vImagedVolumeHeight << " computedImagedVolumeHeight = " << computedImagedVolumeHeight << endl;
+					Float64 heightRelativeDifference = fabs(computedImagedVolumeHeight/vImagedVolumeHeight- 1.0);
+//cerr << "checkConsistencyOfTiledImageGeometry(): fabs(computedImagedVolumeHeight/vImagedVolumeHeight - 1.0) = " << heightRelativeDifference << endl;
+					if (heightRelativeDifference > 0.001) {
+						if (newformat) {
+							log << WMsgDCF(MMsgDC(ImagedVolumeHeightInconsistentWithTotalPixelMatrixRowsAndPixelSpacing),aImagedVolumeHeight)
+								<< " = <" << vImagedVolumeHeight
+								<< " > - expected " << computedImagedVolumeHeight
+								<< " for " << vTotalPixelMatrixRows << " rows"
+								<< ", " << vPixelSpacing_BetweenRows << " PixelSpacing between rows"
+								<< endl;
+						}
+						else {
+							log << WMsgDC(NumberOfFramesDoesNotMatchExpectedValueForTiledTotalPixelMatrix)
+								<< " got " << vImagedVolumeHeight
+								<< " expected " << computedImagedVolumeHeight
+								<< " for " << vTotalPixelMatrixRows << " rows"
+								<< ", " << vPixelSpacing_BetweenRows << " PixelSpacing between rows"
+								<< endl;
+						}
+						//success=false;
+					}
+				}
 			}
 		}
 	}

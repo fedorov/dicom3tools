@@ -1,4 +1,26 @@
-250524:	appsrc/dcfile/dciodvfy.cc,dciodvfy.man,libsrc/include/dctool/attrmxls.h,libsrc/src/dctool/attrmxls.cc: Check only first item of Per-Frame Functional Groups Sequence by default, without specific command line option to do them all (000621)
+250817: libsrc/standard/condn.tpl: Do not report missing PlanePositionSequence and PlaneOrientationSequence for WSI Parametric Map (000628)
+
+250817: libsrc/standard/strval/base.tpl,ct.tpl,mr.tpl: Update Pixel Contrast Image/Frame Type Value 4 to use QUANTITY, expecting details to be in RWVM Quantity Definition Sequence (CP 1700)
+
+250723:	appsrc/dcfile/dcinfo.cc,.man,Imakefile: Add utility to describe characteristics of images esp. re. multi-frame, enhanced, encapsulated and presence or absence of offset tables (000627)
+
+250715:	appsrc/dcfile/dciodvfy.cc: Check consistency of ImagedVolumeWidth,Height with TotalPixelMatrixColumns,Rows and PixelSpacing (000626)
+
+250713:	libsrc/standard/elmdict/other.tpl: Add PixelMed original file message digest private data elements
+
+250709:	libsrc/standard/module/rt.tpl: Relax Type 1 RT Structure Set requirements (CP 2445)
+
+250709:	libsrc/standard/elmdict/base.tpl: Add data element for Add RT specific plan approvals (CP 2427)
+
+250605:	libsrc/standard/transyn.tpl,strval/base.tpl: Add HTJ2K Transfer Syntaxes and string values (Sup 235)
+
+250605:	libsrc/standard/transyn.tpl,strval/base.tpl: Add JPEG-XL Transfer Syntaxes and string values (Sup 232)
+
+250605:	libsrc/include/dctool/vr.h,src/dctool/attrmxrd.cc: Check VR is OB for encapsulated compressed PixelData (000624)
+
+250525:	appsrc/dcfile/dciodvfy.cc,dciodvfy.man,libsrc/src/dctool/attrmxls.cc,libsrc/support/module.awk: Check only first item of Referenced Image Navigation Sequence by default (000623)
+
+250524:	appsrc/dcfile/dciodvfy.cc,dciodvfy.man,libsrc/include/dctool/attrmxls.h,iodcomp.h,module.h,libsrc/src/dctool/attrmxls.cc,libsrc/support/iodcomp.awk,module.awk: Check only first item of Per-Frame Functional Groups Sequence by default, without specific command line option to do them all (000621)
 
 250523:	libsrc/standard/strval/base.tpl: Add 99Visiopharm coding scheme
 

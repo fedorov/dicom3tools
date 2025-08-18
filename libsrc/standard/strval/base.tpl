@@ -1259,8 +1259,10 @@ StringValues="LossyImageCompressionMethod" {
 	ISO_10918_1 = JPEG Lossy Compression,
 	ISO_14495_1 = JPEG-LS Near-lossless Compression,
 	ISO_15444_1 = JPEG 2000 Irreversible Compression,
+	ISO_15444_15 = High-Throughput JPEG 2000 Irreversible Compression,
 	ISO_13818_2 = MPEG2 Compression,
-	ISO_14496_10 = MPEG-4 AVC/H.264 Compression
+	ISO_14496_10 = MPEG-4 AVC/H.264 Compression,
+	ISO_18181_1 = JPEG XL Lossy Compression
 }
 
 StringValues="ContentItemValueTypes" {
@@ -1371,17 +1373,12 @@ StringValues="CommonEnhancedImageType4" {
 	MAXIMUM,
 	MEAN,
 	MINIMUM,
-	MTT,
 	MULTIPLICATION,
-	RCBF,
-	RCBV,
 	RESAMPLED,
 	STD_DEVIATION,
 	SUBTRACTION,
-	T_TEST,
-	TTP,
-	Z_SCORE,
 	NONE,
+	QUANTITY,
 	MIXED
 }
 
@@ -1392,17 +1389,12 @@ StringValues="CommonEnhancedFrameType4" {
 	MAXIMUM,
 	MEAN,
 	MINIMUM,
-	MTT,
 	MULTIPLICATION,
-	RCBF,
-	RCBV,
 	RESAMPLED,
 	STD_DEVIATION,
 	SUBTRACTION,
-	T_TEST,
-	TTP,
-	Z_SCORE,
-	NONE
+	NONE,
+	QUANTITY
 }
 
 StringValues="RespiratoryPhase" {

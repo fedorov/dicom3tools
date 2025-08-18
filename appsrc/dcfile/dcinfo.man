@@ -1,0 +1,68 @@
+.TH DCINFO 1 "23 Jul7 2025" "DICOM PS3" "DICOM PS3 - Summarize information about DICOM file content"
+.SH NAME
+dcinfo \- ACR/NEMA DICOM PS3 ... DICOM PS3 - Summarize information about DICOM file content
+.SH SYNOPSIS
+.HP 10
+.B dcinfo
+.so man1/gen.so
+[
+.B \-v|verbose
+]
+[
+.B \-filename
+]
+.so man1/optin.so
+.SH DESCRIPTION
+.LP
+.B dcinfo
+reads the named dicom or acr-nema input file and provides summary information about the content of the composite instance,
+such as whether or not it is an image, is multi-frame, is enhanced family, is encapsulated and the presence or absence of
+offset tables.
+.LP
+.SH OPTIONS
+The description and verbose output go to standard error.
+.PP
+The basic input switches are described in dcintro(1). Options specific to this program are:
+.TP
+.B \-verbose
+.RS
+Display byte offset from file start and message start, in hexadecimal, and dump contents while reading and once read.
+.RE
+.TP
+.B \-filename
+.RS
+Show the name of the file supplied in the arguments; a hyphen will be reported if no filename was supplied.
+.RE
+.SH ENVIRONMENT
+.LP
+\ 
+.SH EXAMPLES
+.LP
+.RE
+\ 
+.RE
+% dcinfo XAImage.dcm
+.RE
+Transfer Syntax to read data set is encapsulated
+.RE
+Is a non-enhanced family instance
+.RE
+Is an image with multiple frames
+.RE
+Is an image with encapsulated PixelData
+.RE
+Basic Offset Table is present
+.RE
+Extended Offset Table is absent
+.RE
+.SH FILES
+.LP
+\ 
+.SH SEE ALSO
+.BR andump(1) ,
+.BR dcdump(1) ,
+.BR dcfile(1) ,
+.BR dcintro(1)
+.SH AUTHOR
+Copyright (c) 1993-2025, David A. Clunie DBA PixelMed Publishing. All rights reserved.
+.SH BUGS
