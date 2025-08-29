@@ -2653,6 +2653,7 @@
 (0044,0108) VERS="3"	VR="UI"   VM="1"	Keyword="ReferencedAssertionUID"					Name="Referenced Assertion UID"
 (0044,0109) VERS="3"	VR="SQ"   VM="1"	Keyword="ApprovalSubjectSequence"					Name="Approval Subject Sequence"
 (0044,010A) VERS="3"	VR="SQ"   VM="1"	Keyword="OrganizationalRoleCodeSequence"			Name="Organizational Role Code Sequence"
+(0044,0110) VERS="3"	VR="SQ"   VM="1"	Keyword="RTAssertionsSequence"						Name="RT Assertions Sequence"
 (0046,0012) VERS="3"	VR="LO"   VM="1"	Keyword="LensDescription"							Name="Lens Description"
 (0046,0014) VERS="3"	VR="SQ"   VM="1"	Keyword="RightLensSequence"							Name="Right Lens Sequence"
 (0046,0015) VERS="3"	VR="SQ"   VM="1"	Keyword="LeftLensSequence"							Name="Left Lens Sequence"

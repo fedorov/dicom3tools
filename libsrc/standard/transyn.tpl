@@ -32,7 +32,15 @@ Name="JPEGLSLossless"		Desc="JPEG-LS Lossless"						Uid="1.2.840.10008.1.2.4.80"
 Name="JPEGLSNearLossless"	Desc="JPEG-LS Near-Lossless"					Uid="1.2.840.10008.1.2.4.81"	Endian="little" VR="explicit"	Encap="yes"	StandardFamily="ISO14495"
 
 Name="JPEG2000Lossless"		Desc="JPEG 2000 Lossless Only"					Uid="1.2.840.10008.1.2.4.90"	Endian="little" VR="explicit"	Encap="yes"	StandardFamily="ISO15444"
-Name="JPEG2000"			Desc="JPEG 2000"						Uid="1.2.840.10008.1.2.4.91"	Endian="little" VR="explicit"	Encap="yes"	StandardFamily="ISO15444"
+Name="JPEG2000"				Desc="JPEG 2000"						Uid="1.2.840.10008.1.2.4.91"	Endian="little" VR="explicit"	Encap="yes"	StandardFamily="ISO15444"
+
+Name="JPEGXLLossless"		Desc="JPEG XL Lossless"				Uid="1.2.840.10008.1.2.4.110"	Endian="little" VR="explicit"	Encap="yes"	StandardFamily="ISO18181"
+Name="JPEGXLRecompression"	Desc="JPEG XL Recompression"		Uid="1.2.840.10008.1.2.4.111"	Endian="little" VR="explicit"	Encap="yes"	StandardFamily="ISO18181"
+Name="JPEGXL"				Desc="JPEG XL"						Uid="1.2.840.10008.1.2.4.112"	Endian="little" VR="explicit"	Encap="yes"	StandardFamily="ISO18181"
+
+Name="HTJ2KLossless"		Desc="High-Throughput JPEG 2000 (Lossless Only)"				Uid="1.2.840.10008.1.2.4.201"	Endian="little" VR="explicit"	Encap="yes"	StandardFamily="ISO15444"
+Name="HTJ2KLosslessRCPL"	Desc="High-Throughput JPEG 2000 RPCL Options (Lossless Only)"	Uid="1.2.840.10008.1.2.4.202"	Endian="little" VR="explicit"	Encap="yes"	StandardFamily="ISO15444"
+Name="HTJ2K"				Desc="High-Throughput JPEG 2000"								Uid="1.2.840.10008.1.2.4.203"	Endian="little" VR="explicit"	Encap="yes"	StandardFamily="ISO15444"
 
 Name="MPEG2MPML"		Desc="MPEG2 Main Profile @ Main Level"				Uid="1.2.840.10008.1.2.4.100"	Endian="little" VR="explicit"	Encap="yes"
 Name="MPEG2MPHL"		Desc="MPEG2 Main Profile @ High Level"				Uid="1.2.840.10008.1.2.4.101"	Endian="little" VR="explicit"	Encap="yes"

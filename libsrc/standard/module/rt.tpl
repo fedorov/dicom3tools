@@ -285,7 +285,7 @@ Module="StructureSet"
 		Name="SeriesInstanceUID"								Type="1"
 		Name="SeriesNumber"										Type="1"
 	SequenceEnd
-	Sequence="StructureSetROISequence"							Type="1"	VM="1-n"
+	Sequence="StructureSetROISequence"							Type="3"	VM="1-n"
 		Name="ROINumber"										Type="1"
 		Name="ReferencedFrameOfReferenceUID"					Type="1"
 		Name="ROIName"											Type="2"
@@ -318,7 +318,7 @@ Module="StructureSet"
 ModuleEnd
 
 Module="ROIContour"
-	Sequence="ROIContourSequence"								Type="1"	VM="1-n"
+	Sequence="ROIContourSequence"								Type="3"	VM="1-n"
 		Name="ReferencedROINumber"								Type="1"
 		Name="ROIDisplayColor"									Type="3"
 		Name="RecommendedDisplayGrayscaleValue"					Type="3"
@@ -353,7 +353,7 @@ Module="RTDoseROI"
 ModuleEnd
 
 Module="RTROIObservations"
-	Sequence="RTROIObservationsSequence"						Type="1"	VM="1-n"
+	Sequence="RTROIObservationsSequence"						Type="3"	VM="1-n"
 		Name="ObservationNumber"								Type="1"
 		Name="ReferencedROINumber"								Type="1"
 		Name="ROIObservationDateTime"							Type="3"
