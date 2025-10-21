@@ -7652,8 +7652,9 @@ Condition="DimensionOrganizationTypeIsTILED_FULL"
 	Element="DimensionOrganizationType"		ValueSelector="0"	StringValueFromRootAttribute="TILED_FULL"
 ConditionEnd
 
-Condition="DimensionOrganizationTypeIsNotTILED_FULL"
-	Element="DimensionOrganizationType"		Modifier="Not"	ValueSelector="0"	StringValueFromRootAttribute="TILED_FULL"
+Condition="DimensionOrganizationTypeIsAbsentOrNotTILED_FULL"
+	Element="DimensionOrganizationType"						Modifier="Not"	ElementPresent=""
+	Element="DimensionOrganizationType"		Operator="Or"	Modifier="Not"	ValueSelector="0"	StringValueFromRootAttribute="TILED_FULL"
 ConditionEnd
 
 Condition="DimensionOrganizationTypeIsTILED_FULLAndTotalPixelMatrixFocalPlanesGreaterThanOne"

@@ -72,6 +72,8 @@ Index="DifferentStudyInstanceUIDForSOPInstanceUID"		English="Different StudyInst
 Index="DifferentValueRepresentationInOneInstanceComparedToTheOther"			English="Different value representation"
 Index="Diffing"				English="Diffing"
 Index="Digits"				English="digits"
+DimensionIndexPointerAttributeNotPresentInFunctionalGroup
+Index="DimensionIndexPointerAttributeNotPresentInFunctionalGroup"			English="DimensionIndexPointer Attribute not present in any Shared or Per-Frame Functional Group"
 Index="DimensionIndexValueForInStackPositionNumberDoesNotEqualValueOfInStackPositionNumber"			English="DimensionIndexValue for InStackPositionNumber does not equal value of InStackPositionNumber"
 Index="DimensionIndexValueForTemporalPositionIndexDoesNotEqualValueOfTemporalPositionIndex"			English="DimensionIndexValue for TemporalPositionIndex does not equal value of InStackPositionNumber"
 Index="DirectoryOffsetInvalid"			English="Directory record offset invalid - doesn't point to a directory record"
