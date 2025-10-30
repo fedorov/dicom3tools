@@ -2273,7 +2273,6 @@ checkDimensionIndexValuesMatchInStackPositionNumberAndTemporalPositionIndex(Attr
 		}
 	}
 
-
 	Attribute *aPerFrameFunctionalGroupsSequence = list[TagFromName(PerFrameFunctionalGroupsSequence)];
 	if (aPerFrameFunctionalGroupsSequence && aPerFrameFunctionalGroupsSequence->isSequence() && !aPerFrameFunctionalGroupsSequence->isEmpty()) {
 		AttributeList **aPerFrameFunctionalGroupsSequenceLists;
@@ -2374,6 +2373,130 @@ checkDimensionIndexValuesMatchInStackPositionNumberAndTemporalPositionIndex(Attr
 							}
 						}
 					}
+				}
+			}
+		}
+	}
+	
+	return success;
+}
+
+
+static bool
+checkDimensionIndexValuesArePresentInFunctionalGroupsSequence(AttributeList &list,bool verbose,bool newformat,TextOutputStream &log) {
+//cerr << "checkDimensionIndexValuesArePresentInFunctionalGroupsSequence():" << endl;
+	bool success=true;
+	
+	// check both Shared and PerFrame FunctionalGroupsSequence, since dimension could be specified without varying
+
+	AttributeList *sharedList = NULL;
+	{
+		Attribute *aSharedFunctionalGroupsSequence = list[TagFromName(SharedFunctionalGroupsSequence)];
+		if (aSharedFunctionalGroupsSequence && aSharedFunctionalGroupsSequence->isSequence() && !aSharedFunctionalGroupsSequence->isEmpty()) {
+			AttributeList **aSharedFunctionalGroupsSequenceLists;
+			int nSharedFunctionalGroupsSequenceItems;
+			if ((nSharedFunctionalGroupsSequenceItems=aSharedFunctionalGroupsSequence->getLists(&aSharedFunctionalGroupsSequenceLists)) == 1) {
+				sharedList = aSharedFunctionalGroupsSequenceLists[0];
+			}
+		}
+	}
+
+	AttributeList *perFrameList = NULL;
+	{
+		Attribute *aPerFrameFunctionalGroupsSequence = list[TagFromName(PerFrameFunctionalGroupsSequence)];
+		if (aPerFrameFunctionalGroupsSequence && aPerFrameFunctionalGroupsSequence->isSequence() && !aPerFrameFunctionalGroupsSequence->isEmpty()) {
+			AttributeList **aPerFrameFunctionalGroupsSequenceLists;
+			int nPerFrameFunctionalGroupsSequenceItems;
+			if ((nPerFrameFunctionalGroupsSequenceItems=aPerFrameFunctionalGroupsSequence->getLists(&aPerFrameFunctionalGroupsSequenceLists)) > 0) {
+				perFrameList = aPerFrameFunctionalGroupsSequenceLists[0];
+			}
+		}
+	}
+	
+	int nDimensionIndexSequenceSequenceItems = 0;
+	Attribute *aDimensionIndexSequence = list[TagFromName(DimensionIndexSequence)];
+	if (aDimensionIndexSequence && aDimensionIndexSequence->isSequence() && !aDimensionIndexSequence->isEmpty()) {
+		AttributeList **aDimensionIndexSequenceSequenceLists;
+		nDimensionIndexSequenceSequenceItems=aDimensionIndexSequence->getLists(&aDimensionIndexSequenceSequenceLists);
+		for (int i=0; i<nDimensionIndexSequenceSequenceItems; ++i) {
+			Attribute *aDimensionIndexPointer = (*(aDimensionIndexSequenceSequenceLists[i]))[TagFromName(DimensionIndexPointer)];
+			if (aDimensionIndexPointer) {
+				bool found = false;
+				
+				Uint32 vDimensionIndexPointer;
+				(void)aDimensionIndexPointer->getValue(0,vDimensionIndexPointer);
+				Attribute *aFunctionalGroupPointer = (*(aDimensionIndexSequenceSequenceLists[i]))[TagFromName(FunctionalGroupPointer)];
+				if (aFunctionalGroupPointer) {
+					Uint32 vFunctionalGroupPointer;
+					(void)aFunctionalGroupPointer->getValue(0,vFunctionalGroupPointer);
+					
+					Attribute *aFunctionalGroupSequence = NULL;
+					if (perFrameList) {
+						aFunctionalGroupSequence = (*perFrameList)[vFunctionalGroupPointer];
+					}
+					if (aFunctionalGroupSequence == NULL && sharedList) {
+						aFunctionalGroupSequence = (*sharedList)[vFunctionalGroupPointer];
+					}
+					if (aFunctionalGroupSequence && aFunctionalGroupSequence->isSequence() && !aFunctionalGroupSequence->isEmpty()) {
+						AttributeList **aFunctionalGroupSequenceLists;
+						int nFunctionalGroupSequenceSequenceItems;
+						if ((nFunctionalGroupSequenceSequenceItems=aFunctionalGroupSequence->getLists(&aFunctionalGroupSequenceLists)) > 0) {
+							AttributeList *functionalGroupSequenceList = aFunctionalGroupSequenceLists[0];
+							if (functionalGroupSequenceList) {
+								Attribute *aDimensionIndexPointerTarget = (*functionalGroupSequenceList)[vDimensionIndexPointer];
+								if (aDimensionIndexPointerTarget) {
+//cerr << "checkDimensionIndexValuesArePresentInFunctionalGroupsSequence(): found DimensionIndexPointer target (";
+//writeZeroPaddedHexNumber(cerr,((vDimensionIndexPointer>>16)&0xFFFF),4);
+//cerr << ",";
+//writeZeroPaddedHexNumber(cerr,(vDimensionIndexPointer&0xFFFF),4);
+//cerr << ")";
+//cerr << " within FunctionalGroupSequence (";
+//writeZeroPaddedHexNumber(cerr,((vFunctionalGroupPointer>>16)&0xFFFF),4);
+//cerr << ",";
+//writeZeroPaddedHexNumber(cerr,(vFunctionalGroupPointer&0xFFFF),4);
+//cerr << ")";
+//cerr << endl;
+									found = true;
+								}
+							}
+						}
+					}
+				}
+				else {
+					// no FunctionalGroupPointer so DimensionIndexPointer must point to a functional group sequence
+
+					Attribute *aFunctionalGroupSequence = NULL;
+					if (perFrameList) {
+						aFunctionalGroupSequence = (*perFrameList)[vDimensionIndexPointer];
+					}
+					if (aFunctionalGroupSequence == NULL && sharedList) {
+						aFunctionalGroupSequence = (*sharedList)[vDimensionIndexPointer];
+					}
+					if (aFunctionalGroupSequence) {
+//cerr << "checkDimensionIndexValuesArePresentInFunctionalGroupsSequence(): found DimensionIndexPointer target that is FunctionalGroupSequence(";
+//writeZeroPaddedHexNumber(cerr,((vDimensionIndexPointer>>16)&0xFFFF),4);
+//cerr << ",";
+//writeZeroPaddedHexNumber(cerr,(vDimensionIndexPointer&0xFFFF),4);
+//cerr << ")";
+//cerr << endl;
+						found = true;
+					}
+				}
+
+				if (!found) {
+					if (newformat) {
+						log << WMsgDCF(MMsgDC(DimensionIndexPointerAttributeNotPresentInFunctionalGroup),aDimensionIndexPointer);
+					}
+					else {
+						log << WMsgDC(DimensionIndexPointerAttributeNotPresentInFunctionalGroup);
+					}
+					log << " - (";
+					writeZeroPaddedHexNumber(log,((vDimensionIndexPointer>>16)&0xFFFF),4);
+					log << ",";
+					writeZeroPaddedHexNumber(cerr,(vDimensionIndexPointer&0xFFFF),4);
+					log << ")" << endl;
+					
+					success = false;
 				}
 			}
 		}
@@ -3983,6 +4106,8 @@ main(int argc, char *argv[])
 	if (!checkCountOfDimensionIndexValuesMatchesDimensionIndexSequence(list,verbose,newformat,log)) success = false;
 	
 	if (!checkDimensionIndexValuesMatchInStackPositionNumberAndTemporalPositionIndex(list,verbose,newformat,log)) success = false;
+	
+	if (!checkDimensionIndexValuesArePresentInFunctionalGroupsSequence(list,verbose,newformat,log)) success = false;
 	
 	if (!checkCountPerFrameFunctionalGroupsMatchesNumberOfFrames(list,verbose,newformat,log)) success = false;
 	

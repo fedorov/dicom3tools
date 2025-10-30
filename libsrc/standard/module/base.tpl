@@ -1700,7 +1700,7 @@ Module="MultiFrameDimension"
 		Name="DimensionOrganizationUID"			Type="1" 
 	SequenceEnd
 	Name="DimensionOrganizationType"			Type="3"	StringDefinedTerms="DimensionOrganizationType"
-	Sequence="DimensionIndexSequence"			Type="1C"	VM="1-n" Condition="DimensionOrganizationTypeIsNotTILED_FULL"	mbpo="true"
+	Sequence="DimensionIndexSequence"			Type="1C"	VM="1-n" Condition="DimensionOrganizationTypeIsAbsentOrNotTILED_FULL"	mbpo="true"
 		Name="DimensionIndexPointer"			Type="1"
 		Verify="DimensionIndexPointer"						Condition="DimensionIndexPointerIsFrameContentSequence"	ThenErrorMessage="Shall not be FrameContentSequence"
 		Verify="DimensionIndexPointer"						Condition="DimensionIndexPointerIsDimensionIndexValues"	ThenErrorMessage="Shall not be DimensionIndexValues"

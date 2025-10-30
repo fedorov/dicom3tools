@@ -1,3 +1,11 @@
+251020: appsrc/dcfile/dciodvfy.cc,libsrc/src/locale/mesgtext.tpl: Warn when DimensionIndexPointer Attribute not present in any Shared or Per-Frame Functional Group (000629)
+
+251020: libsrc/standard/condn.tpl,module/base.tpl: Check DimensionOrganizationType is absent as alternative to not TILED_FULL for DimensionIndexSequence condition (CP 1822)
+
+250914:	libsrc/standard/elmdict/dicom3.tpl: Add data elements for Add Scan Spot Gantry and Patient Support Angle to Ion Beam Record (CP 2504)
+
+250907:	libsrc/standard/elmdict/dicom3.tpl: Add data elements for Add Dose Reporting Mode and Dose Calculation Model to RT Dose (CP 2428)
+
 250817: libsrc/standard/condn.tpl: Do not report missing PlanePositionSequence and PlaneOrientationSequence for WSI Parametric Map (000628)
 
 250817: libsrc/standard/strval/base.tpl,ct.tpl,mr.tpl: Update Pixel Contrast Image/Frame Type Value 4 to use QUANTITY, expecting details to be in RWVM Quantity Definition Sequence (CP 1700)

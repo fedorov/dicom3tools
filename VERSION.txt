@@ -1,1 +1,1 @@
-dicom3tools_1.00.snapshot.20250817063845.tar.bz2
+dicom3tools_1.00.snapshot.20251020111927.tar.bz2
