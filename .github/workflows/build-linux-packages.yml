@@ -1,0 +1,57 @@
+name: Build Linux Packages
+
+on:
+  release:
+    types: [published]
+  workflow_dispatch:
+
+jobs:
+  build-linux:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Install build dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y g++ xutils-dev libx11-dev libxext-dev
+
+      - name: Configure
+        run: ./Configure
+
+      - name: Run imake
+        run: imake -I./config -DInstallInTopDir
+
+      - name: Build
+        run: make World
+
+      - name: Install
+        run: make install
+
+      - name: Package binaries
+        run: |
+          # Get the platform-specific directory name
+          PLATFORM_DIR=$(ls -1 bin | head -1)
+          echo "Platform directory: $PLATFORM_DIR"
+          
+          # Create a tar.gz archive of the binaries
+          cd bin/$PLATFORM_DIR
+          tar -czf ../../dicom3tools-linux-x86_64.tar.gz .
+          cd ../..
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: dicom3tools-linux-x86_64
+          path: dicom3tools-linux-x86_64.tar.gz
+          retention-days: 90
+
+      - name: Attach to release
+        if: github.event_name == 'release'
+        uses: softprops/action-gh-release@v1
+        with:
+          files: dicom3tools-linux-x86_64.tar.gz
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
