@@ -1,0 +1,27 @@
+# Build artifacts
+Makefile.bak
+*.o
+*.a
+bin/
+lib/
+man/
+config/generic.cf
+
+# Generated Makefiles
+appsrc/**/Makefile
+libsrc/**/Makefile
+support/Makefile
+
+# Backup files
+*~
+*.bak
+
+# IDE files
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS files
+.DS_Store
+Thumbs.db
