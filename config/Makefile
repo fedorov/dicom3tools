@@ -25,8 +25,8 @@
 
             SHELL = /bin/sh
 
-              TOP = .
-      CURRENT_DIR = .
+              TOP = ../.
+      CURRENT_DIR = ./config
      EXECUTABLESUFFIX =
 
                AR = ar rcv
@@ -249,152 +249,6 @@ PROJECTAPPDCONVERTEXTRAINCLUDES = -I$(PROJECTINCLUDEDIR)/$(PROJECTGENERICINCLUDE
 # -------------------------------------------------------------------------
 # start of Imakefile
 
-SUBDIRS        = appsrc config libsrc support
-ALLSUBDIRS     = libsrc appsrc support
-DEPENDSUBDIRS  = libsrc appsrc support
-SBSOURCEDIRS   = libsrc appsrc support
-SBDIR          = .sb
-INSTALLDIRS    = bin include lib man
-
-ARCHIVENAME        = dicom3tools
-ARCHIVEFILES       = $(SUBDIRS) BUGS CHANGES Configure COPYRIGHT Doxyfile Imakefile INSTALL Makefile NotAMakefile README TODO VERSION WARNINGS
-
-ARCHIVEIMAGESNAME  = dicom3tools_images
-ARCHIVEIMAGESFILES  = images
-
-ARCHIVETESTNAME  = dicom3tools_test
-ARCHIVETESTFILES  = test
-
-ARCHIVEMANNAME  = dicom3tools_man
-ARCHIVEMANFILES  = man
-
-ARCHIVEWINEXENAME = dicom3tools_winexe
-ARCHIVEWINEXEFILES = 	appsrc/acrnema/andump.exe 	/usr/bin/cygwin1.dll 	/usr/bin/cyggcc_s-1.dll 	/usr/bin/cygstdc++-6.dll 	appsrc/dcfile/dcdump.exe 	appsrc/dcfile/dcentvfy.exe 	appsrc/dcfile/dcfile.exe 	appsrc/dcfile/dchist.exe 	appsrc/dcfile/dciodvfy.exe 	appsrc/dcfile/dckey.exe 	appsrc/dcfile/dccidump.exe 	appsrc/dcfile/dcsrdump.exe 	appsrc/dcfile/dcstats.exe 	appsrc/dcfile/dctable.exe 	appsrc/dcfile/dcsort.exe 	appsrc/dcfile/dcdirdmp.exe 	appsrc/dcfile/dctoraw.exe 	appsrc/dcfile/dccmp.script 	appsrc/dcfile/dcdiff.script 	appsrc/dcfile/dcinfo.exe
-
-ARCHIVEMACEXENAME = dicom3tools_macexe
-ARCHIVEMACEXEFILES = 	appsrc/acrnema/andump 	appsrc/dcfile/dcdump 	appsrc/dcfile/dcentvfy 	appsrc/dcfile/dcfile 	appsrc/dcfile/dchist 	appsrc/dcfile/dciodvfy 	appsrc/dcfile/dckey 	appsrc/dcfile/dccidump 	appsrc/dcfile/dcsrdump 	appsrc/dcfile/dcstats 	appsrc/dcfile/dctable 	appsrc/dcfile/dcsort 	appsrc/dcfile/dcdirdmp 	appsrc/dcfile/dctoraw 	appsrc/dcfile/dccmp.script 	appsrc/dcfile/dcdiff.script 	appsrc/dcfile/dcinfo
-
-LINKTOIMAGEDIR = ../dctool.support/images
-LINKTOTESTDIR = ../dctool.support/test
-
-all::
-	@case '${MFLAGS}' in *[ik]*) set +e;; esac; \
-	for i in $(ALLSUBDIRS) ;\
-	do \
-		(cd $$i ; echo "making" all "in $(CURRENT_DIR)/$$i..."; \
-			$(MAKE) $(MFLAGS) 'C_DEBUGFLAGS=$(C_DEBUGFLAGS)' 'CPLUSPLUS_DEBUGFLAGS=$(CPLUSPLUS_DEBUGFLAGS)' all); \
-	done
-
-depend::
-	@case '${MFLAGS}' in *[ik]*) set +e;; esac; \
-	for i in $(DEPENDSUBDIRS) ;\
-	do \
-		(cd $$i ; echo "depending" "in $(CURRENT_DIR)/$$i..."; \
-			$(MAKE) $(MFLAGS)  depend); \
-	done
-
-World:
-	$(MAKE) $(MFLAGS) Makefile
-	$(MAKE) $(MFLAGS) Makefiles
-	$(MAKE) $(MFLAGS) clean
-	$(MAKE) $(MFLAGS) depend
-	$(MAKE) $(MFLAGS) setplatform
-	$(MAKE) $(MFLAGS)
-
-World.unclean:
-	$(MAKE) $(MFLAGS) Makefile
-	$(MAKE) $(MFLAGS) Makefiles
-	$(MAKE) $(MFLAGS) depend
-	$(MAKE) $(MFLAGS) setplatform
-	$(MAKE) $(MFLAGS)
-
-library::
-	@case '${MFLAGS}' in *[ik]*) set +e;; esac; \
-	for i in libsrc ;\
-	do \
-		(cd $$i ; echo  "in $(CURRENT_DIR)/$$i..."; \
-			$(MAKE) $(MFLAGS)  all); \
-	done
-
-install.whatis::
-	$(WHATISMAN) -M $(INSTALLMANDIR)
-
-sb:	$(SBSOURCEDIRS)
-	support/linksb $(SBDIR) $(SBSOURCEDIRS)
-
-update.copyright:
-	support/updatecopyright
-
-setversion:
-	support/setversion
-
-setplatform:
-	support/setplatform
-
-archive:	setversion clean clean.makefiles clean.config clean.docs archive.unclean
-
-archive.unclean:
-	$(CP) NotAMakefile Makefile; 	version=""; 	if [ -f VERSION ]; 		then version="_"`cat VERSION`; fi; 	link=$(ARCHIVENAME)$$version; 	ln -s . $$link; 	archive=$(ARCHIVENAME)$$version.$(TAREXT).$(COMPRESSEXT); 	sedstring="s/^[.]/$$link/"; 	export COPY_EXTENDED_ATTRIBUTES_DISABLE=true; export COPYFILE_DISABLE=true; 	echo 'CVS' >Exclude; echo '.DS_Store' >>Exclude; 	if [ -f $$archive ]; then $(MV) $$archive $$archive.old; fi; 	$(TAR) -X Exclude -cvf - `for i in $(ARCHIVEFILES); do echo $$link/$$i; done` 		| $(COMPRESS) > $$archive; 	$(RM) $$link Exclude
-
-archive.images:
-	version=""; 	if [ -f VERSION ]; 		then version="_"`cat VERSION`; fi; 	link=$(ARCHIVEIMAGESNAME)$$version; 	ln -s . $$link; 	archive=$(ARCHIVEIMAGESNAME)$$version.$(TAREXT).$(COMPRESSEXT); 	sedstring="s/^[.]/$$link/"; 	export COPY_EXTENDED_ATTRIBUTES_DISABLE=true; export COPYFILE_DISABLE=true; 	find . -path '*/CVS/*' | sed -e "$$sedstring" >Exclude; 	if [ -f $$archive ]; then $(MV) $$archive $$archive.old; fi; 	$(TAR) -X Exclude -cvh -f - `for i in $(ARCHIVEIMAGESFILES); do echo $$link/$$i; done` 		| $(COMPRESS) > $$archive; 	$(RM) $$link Exclude
-
-archive.test:
-	version=""; 	if [ -f VERSION ]; 		then version="_"`cat VERSION`; fi; 	link=$(ARCHIVETESTNAME)$$version; 	ln -s . $$link; 	archive=$(ARCHIVETESTNAME)$$version.$(TAREXT).$(COMPRESSEXT); 	sedstring="s/^[.]/$$link/"; 	export COPY_EXTENDED_ATTRIBUTES_DISABLE=true; export COPYFILE_DISABLE=true; 	find . -path '*/CVS/*' | sed -e "$$sedstring" >Exclude; 	if [ -f $$archive ]; then $(MV) $$archive $$archive.old; fi; 	$(TAR) -X Exclude -cvh -f - `for i in $(ARCHIVETESTFILES); do echo $$link/$$i; done` 		| $(COMPRESS) > $$archive; 	$(RM) $$link Exclude
-
-archive.man: install.man
-	version=""; 	if [ -f VERSION ]; 		then version="_"`cat VERSION`; fi; 	link=$(ARCHIVEMANNAME)$$version; 	ln -s . $$link; 	archive=$(ARCHIVEMANNAME)$$version.$(TAREXT).$(COMPRESSEXT); 	sedstring="s/^[.]/$$link/"; 	export COPY_EXTENDED_ATTRIBUTES_DISABLE=true; export COPYFILE_DISABLE=true; 	find . -path '*/CVS/*' | sed -e "$$sedstring" >Exclude; 	if [ -f $$archive ]; then $(MV) $$archive $$archive.old; fi; 	$(TAR) -X Exclude -cvf - `for i in $(ARCHIVEMANFILES); do echo $$link/$$i; done` 		| $(COMPRESS) > $$archive; 	$(RM) $$link Exclude
-
-archive.winexe:
-	version=""; 	if [ -f VERSION ]; 		then version="_"`cat VERSION`; fi; 	link=$(ARCHIVEWINEXENAME)$$version; 	$(RM) $$link; 	mkdir -p $$link; 	cp $(ARCHIVEWINEXEFILES) $$link; 	archive=$(ARCHIVEWINEXENAME)$$version.zip; 	$(RM) $$archive; 	(cd $$link; for i in *.exe; do touch $$i.local; done); 	(cd $$link; zip ../$$archive *.script *.exe *.dll *.exe.local); 	$(RM) $$link
-
-archive.macexe:
-	#version="_"`uname -p`"_"`uname -s`"_"`uname -r`
-	version=""; 	if [ -f VERSION ]; 		then version=$$version"_"`cat VERSION`; fi; 	link=$(ARCHIVEMACEXENAME)$$version; 	$(RM) $$link; 	mkdir -p $$link; 	cp $(ARCHIVEMACEXEFILES) $$link; 	archive=$(ARCHIVEMACEXENAME)$$version.zip; 	$(RM) $$archive; 	(cd $$link; zip ../$$archive dc* an*); 	$(RM) $$link
-
-clean.installed:
-	$(RM) $(INSTALLDIRS)
-
-clean.sb:
-	$(RM) $(SBDIR)
-
-clean.makefiles:
-	$(RM) `find . -name 'Makefile*' -print`
-
-clean.config:
-	$(RM) config/generic.cf
-
-clean.docs:
-	$(RM) docs
-
-clean.dist: clean clean.makefiles clean.config clean.installed clean.sb clean.docs
-	$(RM) Exclude
-
-find.pre:
-	support/findpre
-
-clean.pre:
-	$(RM) `support/findpre`
-
-install.minimal:
-	$(INSTALL) $(INSTPGMFLAGS) $(INSTBINFLAGS) 		appsrc/acrnema/andump /usr/local/bin
-
-	$(INSTALL) $(INSTPGMFLAGS) $(INSTBINFLAGS) 		appsrc/dcdisp/dcdisp /usr/local/bin
-
-	$(INSTALL) $(INSTPGMFLAGS) $(INSTBINFLAGS) 		appsrc/dcfile/dcdump /usr/local/bin
-
-	$(INSTALL) $(INSTPGMFLAGS) $(INSTBINFLAGS) 		appsrc/dcfile/dciodvfy /usr/local/bin
-
-	$(INSTALL) $(INSTPGMFLAGS) $(INSTBINFLAGS) 		appsrc/dcfile/dcdict /usr/local/bin
-
-links:
-	ln -s $(LINKTOIMAGEDIR)
-	ln -s $(LINKTOTESTDIR)
-
-docs:	. clean.docs
-	$(MKDIR) docs
-	$(DOXYGEN) Doxyfile
-
 # -------------------------------------------------------------------------
 # common rules for all Makefiles - do not edit
 
@@ -410,110 +264,27 @@ Makefile::
 	$(IMAKE_CMD) -DTOPDIR=$(TOP) -DCURDIR=$(CURRENT_DIR)         -DInstallInTopDir -DSystemIncludeOption=-I
 
 # -------------------------------------------------------------------------
-# rules for building in SUBDIRS - do not edit
+# empty rules for directories that do not have SUBDIRS - do not edit
 
 test::
-	@case '${MFLAGS}' in *[ik]*) set +e;; esac; \
-	for i in $(SUBDIRS) ;\
-	do \
-		(cd $$i ; echo "testing" "in $(CURRENT_DIR)/$$i..."; \
-			$(MAKE) $(MFLAGS) DESTDIR='$(DESTDIR)' test); \
-	done
+	@echo "test in $(CURRENT_DIR) done"
 
 test.create::
-	@case '${MFLAGS}' in *[ik]*) set +e;; esac; \
-	for i in $(SUBDIRS) ;\
-	do \
-		(cd $$i ; echo "creating tests" "in $(CURRENT_DIR)/$$i..."; \
-			$(MAKE) $(MFLAGS) DESTDIR='$(DESTDIR)' test.create); \
-	done
+	@echo "test.create in $(CURRENT_DIR) done"
 
 install::
-	@case '${MFLAGS}' in *[ik]*) set +e;; esac; \
-	for i in $(SUBDIRS) ;\
-	do \
-		(cd $$i ; echo "installing" "in $(CURRENT_DIR)/$$i..."; \
-			$(MAKE) $(MFLAGS) DESTDIR='$(DESTDIR)' install); \
-	done
+	@echo "install in $(CURRENT_DIR) done"
 
 install.man::
-	@case '${MFLAGS}' in *[ik]*) set +e;; esac; \
-	for i in $(SUBDIRS) ;\
-	do \
-		(cd $$i ; echo "installing man pages" "in $(CURRENT_DIR)/$$i..."; \
-			$(MAKE) $(MFLAGS) DESTDIR='$(DESTDIR)' install.man); \
-	done
-
-clean::
-	@case '${MFLAGS}' in *[ik]*) set +e;; esac; \
-	for i in $(SUBDIRS) ;\
-	do \
-		(cd $$i ; echo "cleaning" "in $(CURRENT_DIR)/$$i..."; \
-			$(MAKE) $(MFLAGS) RM_CMD='$(RM_CMD)' clean); \
-	done
+	@echo "install.man in $(CURRENT_DIR) done"
 
 Makefiles::
-	@case '${MFLAGS}' in *[ik]*) set +e;; esac; \
-	for i in $(SUBDIRS) ;\
-	do \
-		echo "making Makefiles in $(CURRENT_DIR)/$$i..."; \
-		case "$$i" in \
-		./?*/?*/?*/?*) newtop=../../../../ sub=subsubsubsub;; \
-		./?*/?*/?*) newtop=../../../ sub=subsubsub;; \
-		./?*/?*)    newtop=../../ sub=subsub;; \
-		./?*)       newtop=../ sub=sub;; \
-		*/?*/?*/?*)    newtop=../../../../ sub=subsubsubsub;; \
-		*/?*/?*)    newtop=../../../ sub=subsubsub;; \
-		*/?*)       newtop=../../ sub=subsub;; \
-		*)	    newtop=../ sub=sub;; \
-		esac; \
-		case "$(TOP)" in \
-		/?*) newtop=  upprefix=  ;; \
-		*) upprefix=../ ;; \
-		esac; \
-		$(MAKE) $${sub}dirMakefiles UPPREFIX=$$upprefix NEWTOP=$$newtop \
-		MAKEFILE_SUBDIR=$$i NEW_CURRENT_DIR=$(CURRENT_DIR)/$$i;\
-	done
-
-subdirMakefiles:
-	$(RM) $(MAKEFILE_SUBDIR)/Makefile.bak
-	-@if [ -f $(MAKEFILE_SUBDIR)/Makefile ]; then set -x; \
-	$(MV) $(MAKEFILE_SUBDIR)/Makefile $(MAKEFILE_SUBDIR)/Makefile.bak; \
-	else exit 0; fi
-	cd $(MAKEFILE_SUBDIR); $(IMAKE_CMD) -DTOPDIR=$(UPPREFIX)$(TOP) -DCURDIR=$(NEW_CURRENT_DIR)         -DInstallInTopDir -DSystemIncludeOption=-I; \
-	$(MAKE) $(MFLAGS) Makefiles
-
-subsubdirMakefiles:
-	$(RM) $(MAKEFILE_SUBDIR)/Makefile.bak
-	-@if [ -f $(MAKEFILE_SUBDIR)/Makefile ]; then set -x; \
-	$(MV) $(MAKEFILE_SUBDIR)/Makefile $(MAKEFILE_SUBDIR)/Makefile.bak; \
-	else exit 0; fi
-	cd $(MAKEFILE_SUBDIR); $(IMAKE_CMD) -DTOPDIR=$(UPPREFIX)$(UPPREFIX)$(TOP) -DCURDIR=$(NEW_CURRENT_DIR)         -DInstallInTopDir -DSystemIncludeOption=-I; \
-	$(MAKE) $(MFLAGS) Makefiles
-
-subsubsubdirMakefiles:
-	$(RM) $(MAKEFILE_SUBDIR)/Makefile.bak
-	-@if [ -f $(MAKEFILE_SUBDIR)/Makefile ]; then set -x; \
-	$(MV) $(MAKEFILE_SUBDIR)/Makefile $(MAKEFILE_SUBDIR)/Makefile.bak; \
-	else exit 0; fi
-	cd $(MAKEFILE_SUBDIR); $(IMAKE_CMD) -DTOPDIR=$(UPPREFIX)$(UPPREFIX)$(UPPREFIX)$(TOP) -DCURDIR=$(NEW_CURRENT_DIR)         -DInstallInTopDir -DSystemIncludeOption=-I; \
-	$(MAKE) $(MFLAGS) Makefiles
-
-subsubsubsubdirMakefiles:
-	$(RM) $(MAKEFILE_SUBDIR)/Makefile.bak
-	-@if [ -f $(MAKEFILE_SUBDIR)/Makefile ]; then set -x; \
-	$(MV) $(MAKEFILE_SUBDIR)/Makefile $(MAKEFILE_SUBDIR)/Makefile.bak; \
-	else exit 0; fi
-	cd $(MAKEFILE_SUBDIR); $(IMAKE_CMD) -DTOPDIR=$(UPPREFIX)$(UPPREFIX)$(UPPREFIX)$(UPPREFIX)$(TOP) -DCURDIR=$(NEW_CURRENT_DIR)         -DInstallInTopDir -DSystemIncludeOption=-I; \
-	$(MAKE) $(MFLAGS) Makefiles
 
 includes::
-	@case '${MFLAGS}' in *[ik]*) set +e;; esac; \
-	for i in $(SUBDIRS) ;\
-	do \
-		(cd $$i ; echo including "in $(CURRENT_DIR)/$$i..."; \
-			$(MAKE) $(MFLAGS)  includes); \
-	done
+
+depend::
+
+all::
 
 # -------------------------------------------------------------------------
 # dependencies generated by makedepend

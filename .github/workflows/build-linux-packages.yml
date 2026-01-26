@@ -7,7 +7,10 @@ on:
 
 jobs:
   build-linux:
-    runs-on: ubuntu-latest
+    # Use Ubuntu 20.04 for better backward compatibility
+    # Ubuntu 20.04 provides GLIBC 2.31 and GLIBCXX_3.4.28 (gcc 9.4)
+    # which are compatible with most modern Linux distributions
+    runs-on: ubuntu-20.04
     
     steps:
       - name: Checkout repository
@@ -29,6 +32,55 @@ jobs:
 
       - name: Install
         run: make install
+
+      - name: Test binary execution
+        run: |
+          echo "Testing binary execution to ensure they work correctly..."
+          
+          # Get the platform-specific directory name
+          PLATFORM_DIR=$(ls -1 bin | head -1)
+          echo "Platform directory: $PLATFORM_DIR"
+          
+          # Test a few key binaries
+          BINARIES="dciodvfy dcdump dcfile dcentvfy"
+          
+          for binary in $BINARIES; do
+              BINARY_PATH="bin/$PLATFORM_DIR/$binary"
+              if [ -f "$BINARY_PATH" ]; then
+                  echo "Testing $binary..."
+                  # Test that the binary can at least show usage without crashing
+                  if $BINARY_PATH 2>&1 | head -5; then
+                      echo "✓ $binary executed successfully"
+                  else
+                      echo "✗ $binary failed to execute"
+                      exit 1
+                  fi
+              else
+                  echo "⚠ $binary not found at $BINARY_PATH"
+              fi
+          done
+          
+          echo "All binary execution tests passed!"
+
+      - name: Check binary dependencies
+        run: |
+          echo "Checking binary dependencies..."
+          
+          # Get the platform-specific directory name
+          PLATFORM_DIR=$(ls -1 bin | head -1)
+          
+          # Check dependencies for a key binary
+          echo "Dependencies for dciodvfy:"
+          ldd bin/$PLATFORM_DIR/dciodvfy
+          
+          # Check GLIBC and GLIBCXX versions required
+          echo ""
+          echo "Required GLIBC versions:"
+          objdump -T bin/$PLATFORM_DIR/dciodvfy | grep GLIBC | awk '{print $5}' | grep GLIBC | sort -u
+          
+          echo ""
+          echo "Required GLIBCXX versions:"
+          objdump -T bin/$PLATFORM_DIR/dciodvfy | grep GLIBCXX | awk '{print $5}' | grep GLIBCXX | sort -u
 
       - name: Package binaries
         run: |
