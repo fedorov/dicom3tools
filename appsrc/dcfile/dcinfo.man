@@ -1,4 +1,4 @@
-.TH DCINFO 1 "23 Jul7 2025" "DICOM PS3" "DICOM PS3 - Summarize information about DICOM file content"
+.TH DCINFO 1 "24 Hune 2026" "DICOM PS3" "DICOM PS3 - Summarize information about DICOM file content"
 .SH NAME
 dcinfo \- ACR/NEMA DICOM PS3 ... DICOM PS3 - Summarize information about DICOM file content
 .SH SYNOPSIS
@@ -47,6 +47,8 @@ Transfer Syntax to read data set is encapsulated
 .RE
 Is a non-enhanced family instance
 .RE
+Is not an instance of a Concatenation
+.RE
 Is an image with multiple frames
 .RE
 Is an image with encapsulated PixelData
@@ -54,6 +56,26 @@ Is an image with encapsulated PixelData
 Basic Offset Table is present
 .RE
 Extended Offset Table is absent
+.RE
+
+.RE
+% dcinfo WSImage.dcm
+.RE
+Transfer Syntax to read data set is encapsulated
+.RE
+Is an enhanced family instance
+.RE
+Is an enhanced family instance without PerFrameFunctionalGroupsSequence
+.RE
+Is not an instance of a Concatenation
+.RE
+Is an image with multiple frames
+.RE
+Is an image with encapsulated PixelData
+.RE
+Basic Offset Table is absent
+.RE
+Extended Offset Table is present
 .RE
 .SH FILES
 .LP
@@ -64,5 +86,5 @@ Extended Offset Table is absent
 .BR dcfile(1) ,
 .BR dcintro(1)
 .SH AUTHOR
-Copyright (c) 1993-2025, David A. Clunie DBA PixelMed Publishing. All rights reserved.
+Copyright (c) 1993-2026, David A. Clunie DBA PixelMed Publishing. All rights reserved.
 .SH BUGS

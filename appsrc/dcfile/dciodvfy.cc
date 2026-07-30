@@ -3759,6 +3759,37 @@ checkOffsetTables(AttributeList &list,istream& input_opener,bool verbose,bool ne
 						<< endl;
 				}
 			}
+			// (000641)
+			Uint32 expectedLength = vNumberOfFrames * 8;
+			Uint32 lengthOfExtendedOffsetTableInBytes = aExtendedOffsetTable->getVL();
+//cerr << "checkOffsetTables(): length of ExtendedOffsetTable attribute value in bytes = " << lengthOfExtendedOffsetTableInBytes << endl;
+			if (lengthOfExtendedOffsetTableInBytes != expectedLength) {
+				if (newformat) {
+					log << EMsgDCF(MMsgDC(IncorrectLengthOfExtendedOffsetTable),aExtendedOffsetTable);
+				}
+				else {
+					log << EMsgDC(IncorrectLengthOfExtendedOffsetTable);
+				}
+				log << " - actual length " << lengthOfExtendedOffsetTableInBytes << " (dec) "
+					<< " does not match expected value " << expectedLength << " (dec)"
+					<< endl;
+			}
+			Attribute *aExtendedOffsetTableLengths = list[TagFromName(ExtendedOffsetTableLengths)];
+			if (aExtendedOffsetTableLengths) {
+				Uint32 lengthOfExtendedOffsetTableLengthsInBytes = aExtendedOffsetTableLengths->getVL();
+//cerr << "checkOffsetTables(): length of ExtendedOffsetTableLengths attribute value in bytes = " << lengthOfExtendedOffsetTableLengthsInBytes << endl;
+				if (lengthOfExtendedOffsetTableLengthsInBytes != expectedLength) {
+					if (newformat) {
+						log << EMsgDCF(MMsgDC(IncorrectLengthOfExtendedOffsetTableLengths),aExtendedOffsetTableLengths);
+					}
+					else {
+						log << EMsgDC(IncorrectLengthOfExtendedOffsetTableLengths);
+					}
+					log << " - actual length " << lengthOfExtendedOffsetTableLengthsInBytes << " (dec) "
+						<< " does not match expected value " << expectedLength << " (dec)"
+						<< endl;
+				}
+			}
 		}
 //cerr << "checkOffsetTables(): getting ExtendedOffsetTable values" << endl;
 //			// this fails, since reading OV not implemented yet (only OtherVeryLongLargeAttribute, not ... SmallAttribute) :(
@@ -3977,6 +4008,33 @@ checkUIDsAreNotReusedForDifferentEntities(AttributeList &list,bool verbose,bool 
 	return success;
 }
 
+static bool
+checkConsistencyOfWholeSlideMicroscopyAttributes(AttributeList &list,bool verbose,bool newformat,TextOutputStream &log) {
+//cerr << "checkConsistencyOfWholeSlideMicroscopyAttributes():" << endl;
+	bool success=true;
+
+	char *vImageType;
+	Attribute *aImageType=list[TagFromName(ImageType)];
+	if (aImageType && aImageType->getValue(2,vImageType)) {
+//cerr << "checkConsistencyOfWholeSlideMicroscopyAttributes(): ImageType Value 3 = " << vImageType << endl;
+		if (strcmp(vImageType,"LABEL") == 0 || strcmp(vImageType,"OVERVIEW") == 0) {
+			Attribute *aPyramidUID=list[TagFromName(PyramidUID)];
+			char *vPyramidUID=AttributeValue(aPyramidUID,"");
+			if (strlen(vPyramidUID) > 0) {
+			 	if (newformat) {
+					log << WMsgDCF(MMsgDC(PyramidUIDPresentInLabelOrOverviewImage),aPyramidUID) << endl;
+				}
+				else {
+					log << WMsgDC(PyramidUIDPresentInLabelOrOverviewImage) << endl;
+				}
+				delete[] vPyramidUID;
+			}
+		}
+	}
+
+	return success;
+}
+
 int
 main(int argc, char *argv[])
 {
@@ -4124,6 +4182,8 @@ main(int argc, char *argv[])
 	if (!checkUIDsAreNotReusedForDifferentEntities(list,verbose,newformat,log)) success = false;
 	
 	if (!checkCodeSequenceItemsAreNotUnknown(list,verbose,newformat,allpffgitems,log)) success = false;	// (000589)
+	
+	if (!checkConsistencyOfWholeSlideMicroscopyAttributes(list,verbose,newformat,log)) success = false;	// (000577)
 
 	if (!list.validatePrivate(verbose,newformat,allpffgitems,log)) success = false;
 	

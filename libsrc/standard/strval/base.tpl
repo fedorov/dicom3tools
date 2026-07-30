@@ -300,6 +300,7 @@ StringValues="MiscellaneousCodingSchemeDesignators"	{
 	99_APERIO = Leica Aperio,
 	99_PRAMANA = Pramana,
 	99_Pramana = Pramana,
+	99PRAMANA = Pramana,
 	99mrireface = mri_reface,
 	99Visiopharm = Visiopharm,
 	ACR = ACR Index for Radiological Diagnosis,
@@ -694,6 +695,7 @@ StringValues="Modality"	{
 	SR = SR Document,
 	SRF = Subjective Refraction,
 	STAIN = Automated Slide Stainer,
+	TEXTUREMAP = Texture Map,
 	TG = Thermography,
 	US = Ultrasound,
 	VA = Visual Acuity,
@@ -1253,6 +1255,22 @@ StringValues="MIMETypeApplicationSTL"	{
 	model/STL,
 	Model/STL,
 	MODEL/STL
+}
+
+# should really have a case insensitive match :(
+StringValues="MIMETypeApplicationOBJ"	{
+	model/obj,
+	model/OBJ,
+	Model/OBJ,
+	MODEL/OBJ
+}
+
+# should really have a case insensitive match :(
+StringValues="MIMETypeApplicationMTL"	{
+	model/mtl,
+	model/MTL,
+	Model/MTL,
+	MODEL/MTL
 }
 
 StringValues="LossyImageCompressionMethod" {

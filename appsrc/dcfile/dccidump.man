@@ -1,4 +1,4 @@
-.TH DCCIDUMP 1 "12 June 2022" "DICOM PS3" "DICOM PS3 - Describe DICOM SR content"
+.TH DCCIDUMP 1 "28 February 2026" "DICOM PS3" "DICOM PS3 - Describe DICOM SR content"
 .SH NAME
 dccidump \- ACR/NEMA DICOM PS3 ... DICOM PS3 - Describe DICOM Content Items
 .SH SYNOPSIS
@@ -72,7 +72,9 @@ Preceed each content item with the dot delimited numeric identifier of the seque
 .LP
 \ 
 .SH SEE ALSO
-.BR dcintro(1)
+.BR dcintro(1) ,
+.BR dcdump(1) ,
+.BR dccsdump(1)
 .SH AUTHOR
-Copyright (c) 1993-2024, David A. Clunie DBA PixelMed Publishing. All rights reserved.
+Copyright (c) 1993-2026, David A. Clunie DBA PixelMed Publishing. All rights reserved.
 .SH BUGS

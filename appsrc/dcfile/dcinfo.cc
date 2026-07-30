@@ -79,7 +79,9 @@ main(int argc, char *argv[])
 
 	Attribute *aSharedFunctionalGroupsSequence=list[TagFromName(SharedFunctionalGroupsSequence)];
 	Attribute *aPerFrameFunctionalGroupsSequence=list[TagFromName(PerFrameFunctionalGroupsSequence)];
-	if (aSharedFunctionalGroupsSequence || aPerFrameFunctionalGroupsSequence) {
+	if (aSharedFunctionalGroupsSequence
+	 || aPerFrameFunctionalGroupsSequence
+	 ) {
 		log << "Is an enhanced family instance" << endl;
 	}
 	else {
@@ -91,6 +93,25 @@ main(int argc, char *argv[])
 	}
 	else if (aSharedFunctionalGroupsSequence) {
 		log << "Is an enhanced family instance without PerFrameFunctionalGroupsSequence" << endl;
+	}
+
+	// (000639)
+	// Do not check whether is also enhanced family, as it should be, but could be standard extended SOP Class
+	Attribute *aConcatenationFrameOffsetNumber=list[TagFromName(ConcatenationFrameOffsetNumber)];
+	Attribute *aConcatenationUID=list[TagFromName(ConcatenationUID)];
+	Attribute *aSOPInstanceUIDOfConcatenationSource=list[TagFromName(SOPInstanceUIDOfConcatenationSource)];
+	Attribute *aInConcatenationNumber=list[TagFromName(InConcatenationNumber)];
+	Attribute *aInConcatenationTotalNumber=list[TagFromName(InConcatenationTotalNumber)];
+	if (aConcatenationFrameOffsetNumber
+	 || aConcatenationUID
+	 || aSOPInstanceUIDOfConcatenationSource
+	 || aInConcatenationNumber
+	 || aInConcatenationTotalNumber
+	 ) {
+		log << "Is an instance of a Concatenation" << endl;
+	}
+	else {
+		log << "Is not an instance of a Concatenation" << endl;
 	}
 
 	Attribute *aPixelData=list[TagFromName(PixelData)];
@@ -146,7 +167,8 @@ main(int argc, char *argv[])
 			const Uint64 *vExtendedOffsetTable = NULL;
 			Attribute *aExtendedOffsetTable = list[TagFromName(ExtendedOffsetTable)];
 			if (aExtendedOffsetTable) {
-				if (lengthOfBasicOffsetTableInBytes > 0) {
+				Uint32 lengthOfExtendedOffsetTableInBytes = aExtendedOffsetTable->getVL();	// (000640
+				if (lengthOfExtendedOffsetTableInBytes > 0) {
 					log << "Extended Offset Table is present" << endl;
 				}
 				else {

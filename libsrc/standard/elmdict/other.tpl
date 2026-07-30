@@ -2770,7 +2770,9 @@
 (0063,0011) VERS="PRA" VR="UT"   VM="1"		Owner="Pramana Private Tags"			Keyword="scan_statistics"				Name="Scan Statistics"
 (0063,0012) VERS="PRA" VR="UT"   VM="1"		Owner="Pramana Private Tags"			Keyword="stain_info"					Name="Stain Info"
 (0063,0013) VERS="PRA" VR="LO"   VM="1"		Owner="Pramana Private Tags"			Keyword="software_version"				Name="Software Version"
-(0063,0014) VERS="PRA" VR="UT"   VM="1"		Owner="Pramana Private Tags"			Keyword="slide_id"					Name="SlideID"
+(0063,0014) VERS="PRA" VR="UT"   VM="1"		Owner="Pramana Private Tags"			Keyword="slide_id"						Name="SlideID"
+(0063,0015) VERS="PRA" VR="UT"   VM="1"		Owner="Pramana Private Tags"			Keyword="classification_info"			Name="Classification Info"
+(0063,0016) VERS="PRA" VR="OB"   VM="1"		Owner="Pramana Private Tags"			Keyword="intermediate_macro_image"		Name="Intermediate Macro Image"
 
 (0077,0001) VERS="AGFA" VR="LO"   VM="1"		Owner="agfa/FixupStudyInstanceUid"			Keyword="?"					Name="?"
 

@@ -43,7 +43,16 @@ logStringValueOfAttribute(Attribute *a,TextOutputStream &log) {
 static void
 processCodeSequenceItem(AttributeList *list,TextOutputStream &log) {
 	log << "(";
-	logStringValueOfAttribute((*list)[TagFromName(CodeValue)],log);
+	{
+		Attribute *a = (*list)[TagFromName(CodeValue)];
+		if (!a) {	// (000633)
+			a = (*list)[TagFromName(LongCodeValue)];
+			if (!a) {
+				a = (*list)[TagFromName(URNCodeValue)];
+			}
+		}
+		logStringValueOfAttribute(a,log);
+	}
 	log << ",";
 	logStringValueOfAttribute((*list)[TagFromName(CodingSchemeDesignator)],log);
 	log << "," << "\"" ;
@@ -74,6 +83,36 @@ processCodeSequence(Attribute *aCodeSequence,const char *label,TextOutputStream 
 }
 
 static void
+processNumericContent(AttributeList *ptr,TextOutputStream &log) {
+	logStringValueOfAttribute((*ptr)[TagFromName(NumericValue)],log);
+	
+	Attribute *aFloatingPointValue = (*ptr)[TagFromName(FloatingPointValue)];
+	if (aFloatingPointValue) {
+		log << " {";
+		double v;
+		if (aFloatingPointValue->getValue(0,v)) log << setprecision(16) << v;	// this is setprecision(std::numeric_limits<double>::digits10 + 1)
+		log << "}";
+	}
+
+	Attribute *aRationalNumeratorValue = (*ptr)[TagFromName(RationalNumeratorValue)];
+	Attribute *aRationalDenominatorValue = (*ptr)[TagFromName(RationalDenominatorValue)];
+	if (aRationalNumeratorValue || aRationalDenominatorValue) {
+		log << " {";
+		double v;
+		if (aRationalNumeratorValue && aRationalNumeratorValue->getValue(0,v)) log << v;
+		log << "/";
+		if (aRationalDenominatorValue && aRationalDenominatorValue->getValue(0,v)) log << v;
+		log << "}";
+	}
+
+	Attribute *aMeasurementUnitsCodeSequence=(*ptr)[TagFromName(MeasurementUnitsCodeSequence)];
+	if (aMeasurementUnitsCodeSequence) {
+		log << " ";
+		processCodeSequence(aMeasurementUnitsCodeSequence,"",log);
+	}
+}
+
+static void
 processMeasuredValueSequence(Attribute *aMeasuredValueSequence,const char *label,TextOutputStream &log) {
 	log << label;
 
@@ -90,33 +129,7 @@ processMeasuredValueSequence(Attribute *aMeasuredValueSequence,const char *label
 			AttributeList *ptr = *iptr;
 			Assert(ptr);
 			if (i > 0) log << ", ";
-
-			logStringValueOfAttribute((*ptr)[TagFromName(NumericValue)],log);
-			
-			Attribute *aFloatingPointValue = (*ptr)[TagFromName(FloatingPointValue)];
-			if (aFloatingPointValue) {
-				log << " {";
-				double v;
-				if (aFloatingPointValue->getValue(0,v)) log << setprecision(16) << v;	// this is setprecision(std::numeric_limits<double>::digits10 + 1)
-				log << "}";
-			}
-
-			Attribute *aRationalNumeratorValue = (*ptr)[TagFromName(RationalNumeratorValue)];
-			Attribute *aRationalDenominatorValue = (*ptr)[TagFromName(RationalDenominatorValue)];
-			if (aRationalNumeratorValue || aRationalDenominatorValue) {
-				log << " {";
-				double v;
-				if (aRationalNumeratorValue && aRationalNumeratorValue->getValue(0,v)) log << v;
-				log << "/";
-				if (aRationalDenominatorValue && aRationalDenominatorValue->getValue(0,v)) log << v;
-				log << "}";
-			}
-
-			Attribute *aMeasurementUnitsCodeSequence=(*ptr)[TagFromName(MeasurementUnitsCodeSequence)];
-			if (aMeasurementUnitsCodeSequence) {
-				log << " ";
-				processCodeSequence(aMeasurementUnitsCodeSequence,"",log);
-			}
+			processNumericContent(ptr,log);	// (000632)
 		}
 	}
 }
@@ -235,7 +248,7 @@ processScoordContentItem(AttributeList *list,TextOutputStream &log) {
 }
 
 static void
-processScoord3DContentItem(AttributeList *list,TextOutputStream &log) {
+processScoord3DContentItem(AttributeList *list,TextOutputStream &log) {		// (000632)
 	logStringValueOfAttribute((*list)[TagFromName(GraphicType)],log);
 	log << " {";
 	//log.unsetf(ios_base::fixed,ios_base::scientific);	// :) should really explicitly establish the default floating point notation, in which the precision field specifies the maximum number of meaningful digits to display in total counting both those before and those after the decimal point
@@ -259,9 +272,18 @@ processValueOfContentItem(AttributeList *list,TextOutputStream &log) {
 	Attribute *aValueType=(*list)[TagFromName(ValueType)];
 	char *vValueType=AttributeValue(aValueType);
 	if (vValueType) {
-		if (strcmp(vValueType,"NUM") == 0 || strcmp(vValueType,"NUMERIC") == 0) {	// note inconsitency between SR and Content Item Macro
+		if (strcmp(vValueType,"NUM") == 0) {	// used in SR ... content is nested in MeasuredValueSequence
 			log << " = ";
 			processMeasuredValueSequence((*list)[TagFromName(MeasuredValueSequence)],"",log);
+			Attribute *aNumericValueQualifierCodeSequence=(*list)[TagFromName(NumericValueQualifierCodeSequence)];
+			if (aNumericValueQualifierCodeSequence) {
+				log << " ";
+				processCodeSequence(aNumericValueQualifierCodeSequence,"",log);
+			}
+		}
+		else if (strcmp(vValueType,"NUMERIC") == 0) {	// used in Content Item Macro, e.g., AcquisitionContextSequence ... content is in current list (000632)
+			log << " = ";
+			processNumericContent(list,log);			// (000632)
 			Attribute *aNumericValueQualifierCodeSequence=(*list)[TagFromName(NumericValueQualifierCodeSequence)];
 			if (aNumericValueQualifierCodeSequence) {
 				log << " ";

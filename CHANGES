@@ -1,3 +1,45 @@
+260701:	libsrc/standard/strval/base.tpl: Add 99PRAMANA CSD encountered
+
+260627:	libsrc/standard/elmdict/other.tpl: Add more Pramana WSI private data elements encountered
+
+260624:	appsrc/dcfile/dciodvfy.cc,libsrc/src/locale/mesgtext.tpl: Check lengths of Extended Offset Table matches NumberOfFrames (000641)
+
+260624:	appsrc/dcfile/dcinfo.cc: Correct detection of empty Extended Offset Table (000640)
+
+260624:	appsrc/dcfile/dcinfo.cc: Report whether instance of concatenation or not (000639)
+
+260616:	libsrc/standard/condn.tpl: Do not complain about presence of Referenced Series Sequence in Common Instance Reference Module when images referenced from Conversion Source Attributes Sequence (000638)
+
+260613:	libsrc/standard/condn.tpl: Check whether or not IOD permits Segmented Lookup Table Data for other than images (000637)
+
+260613:	libsrc/standard/condn.tpl: Do not complain about presence of Referenced Series Sequence in Common Instance Reference Module when images referenced from Advanced Blending Sequence (000636)
+
+260603:	libsrc/standard/elmdict/dicom3.tpl: Add Display URI data element (CP 2595)
+
+260324:	libsrc/standard/elmdict/siemens.tpl: Remove duplicate MR private data elements and add some from XA60A conformance statement and encountered images
+
+260324:	libsrc/standard/condn.tpl,module/vl.tpl: Add Acquisition and Pyramid UID requirements to WG26SP2025 profile (CP-LAB-279)
+
+260324:	appsrc/dcfile/dciodvfy.cc,libsrc/src/locale/mesgtext.tpl: Report invalid presence of PyramidUID for LABEL and OVERVIEW image types (000577)
+
+260321:	libsrc/standard/elmdict/dicom3.tpl: Add data elements for metal artifact reduction (CP 2575)
+
+260228:	libsrc/standard/module/base.tpl,vl.tpl: Detect missing PrimaryAnatomicStructureSequence in WG26SP2025 profile (000635)
+
+260228:	Imakefile,dcfile/Imakefile,appsrc/dcfile/dccsdump.cc,dccsdump.man,dccidump.man,dcdump.man: Add utility to dump code sequence items (000634)
+
+260228:	appsrc/dcfile/dccidump.cc,dcsrdump.cc: Show Long Code Value or URN Code Value used when Code Value not present (000633)
+
+260228:	appsrc/dcfile/dccidump.cc: Show numeric values in non-SR content items (NUMERIC rather than NUM) (000632)
+
+260201:	libsrc/standard/elmdict/dicom3.tpl: Add data elements for new defined terms for Dose Type to RT Dose Module (CP 2535)
+
+260123:	libsrc/standard/elmdict/dicom3.tpl,module/base.tpl: Add mechanism for handling sensitive images (CP 1982)
+
+260117:	libsrc/standard/condn.tpl,sopcl.tpl,iodcomp,module,strval/base.tpl: Add DICOM Encapsulation of OBJ Models for 3D Manufacturing and Virtual Reality (Sup 208)
+
+251221:	libsrc/standard/condn.tpl: Check for SCT human species as well as SRT (000630)
+
 251020: appsrc/dcfile/dciodvfy.cc,libsrc/src/locale/mesgtext.tpl: Warn when DimensionIndexPointer Attribute not present in any Shared or Per-Frame Functional Group (000629)
 
 251020: libsrc/standard/condn.tpl,module/base.tpl: Check DimensionOrganizationType is absent as alternative to not TILED_FULL for DimensionIndexSequence condition (CP 1822)
