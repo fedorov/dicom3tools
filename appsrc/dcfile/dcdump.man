@@ -1,4 +1,4 @@
-.TH DCDUMP 1 "6 March 2014" "DICOM PS3" "DICOM PS3 - Describe DICOM file content"
+.TH DCDUMP 1 "28 February 2026" "DICOM PS3" "DICOM PS3 - Describe DICOM file content"
 .SH NAME
 dcdump \- ACR/NEMA DICOM PS3 ... DICOM PS3 - Describe DICOM file content
 .SH SYNOPSIS
@@ -68,7 +68,9 @@ Show the name of the file supplied in the arguments; a hyphen will be reported i
 \ 
 .SH SEE ALSO
 .BR andump(1) ,
-.BR dcintro(1)
+.BR dcintro(1) ,
+.BR dccidump(1) ,
+.BR dccsdump(1)
 .SH AUTHOR
-Copyright (c) 1993-2024, David A. Clunie DBA PixelMed Publishing. All rights reserved.
+Copyright (c) 1993-2026, David A. Clunie DBA PixelMed Publishing. All rights reserved.
 .SH BUGS

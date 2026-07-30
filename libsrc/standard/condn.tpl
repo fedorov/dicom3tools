@@ -91,6 +91,14 @@ Condition="EncapsulatedSTLInstance"
 	Element="SOPClassUID"		StringConstantFromRootAttribute="EncapsulatedSTLStorageSOPClassUID"
 ConditionEnd
 
+Condition="EncapsulatedOBJInstance"
+	Element="SOPClassUID"		StringConstantFromRootAttribute="EncapsulatedOBJStorageSOPClassUID"
+ConditionEnd
+
+Condition="EncapsulatedMTLInstance"
+	Element="SOPClassUID"		StringConstantFromRootAttribute="EncapsulatedMTLStorageSOPClassUID"
+ConditionEnd
+
 Condition="OphthalmicPhotography8BitImageInstance"
 	Element="SOPClassUID"		StringConstantFromRootAttribute="OphthalmicPhotography8BitImageStorageSOPClassUID"
 ConditionEnd
@@ -920,18 +928,28 @@ Condition="NeedsNonSegmentedLookupTableData"
 		Element="SegmentedGreenPaletteColorLookupTableData"	Operator="And" Modifier="Not" ElementPresent=""
 		Element="SegmentedBluePaletteColorLookupTableData"	Operator="And" Modifier="Not" ElementPresent=""
 	) Operator="Or"
-	Element="SOPClassUID"								Operator="Or" StringValue="1.2.840.10008.5.1.4.1.1.11.3"
-	Element="SOPClassUID"								Operator="Or" StringValue="1.2.840.10008.5.1.4.1.1.11.4"
-	Element="SOPClassUID"								Operator="Or" StringValue="1.2.840.10008.5.1.4.39.1"
+	Element="SOPClassUID"		Operator="Or" StringConstantFromRootAttribute="GrayscaleSoftcopyPresentationStateStorageSOPClassUID"
+	Element="SOPClassUID"		Operator="Or" StringConstantFromRootAttribute="ColorSoftcopyPresentationStateStorageSOPClassUID"
+	Element="SOPClassUID"		Operator="Or" StringConstantFromRootAttribute="PseudoColorSoftcopyPresentationStateStorageSOPClassUID"
+	Element="SOPClassUID"		Operator="Or" StringConstantFromRootAttribute="BlendingSoftcopyPresentationStateStorageSOPClassUID"
+	Element="SOPClassUID"		Operator="Or" StringConstantFromRootAttribute="AdvancedBlendingSoftcopyPresentationStateStorageSOPClassUID"
+	Element="SOPClassUID"		Operator="Or" StringConstantFromRootAttribute="SegmentationStorageSOPClassUID"
+	Element="SOPClassUID"		Operator="Or" StringConstantFromRootAttribute="LabelMapSegmentationStorageSOPClassUID"
+	Element="SOPClassUID"		Operator="Or" StringConstantFromRootAttribute="SurfaceSegmentationStorageSOPClassUID"
 ConditionEnd
 
 Condition="NeedsSegmentedLookupTableData"
 	Element="RedPaletteColorLookupTableData"					   Modifier="Not" ElementPresent=""
 	Element="GreenPaletteColorLookupTableData"		Operator="And" Modifier="Not" ElementPresent=""
 	Element="BluePaletteColorLookupTableData"		Operator="And" Modifier="Not" ElementPresent=""
-	Element="SOPClassUID"							Operator="And" Modifier="Not" StringValue="1.2.840.10008.5.1.4.1.1.11.3"
-	Element="SOPClassUID"							Operator="And" Modifier="Not" StringValue="1.2.840.10008.5.1.4.1.1.11.4"
-	Element="SOPClassUID"							Operator="And" Modifier="Not" StringValue="1.2.840.10008.5.1.4.39.1"
+	Element="SOPClassUID"		Operator="And"	Modifier="Not" StringConstantFromRootAttribute="GrayscaleSoftcopyPresentationStateStorageSOPClassUID"
+	Element="SOPClassUID"		Operator="And"	Modifier="Not" StringConstantFromRootAttribute="ColorSoftcopyPresentationStateStorageSOPClassUID"
+	Element="SOPClassUID"		Operator="And"	Modifier="Not" StringConstantFromRootAttribute="PseudoColorSoftcopyPresentationStateStorageSOPClassUID"
+	Element="SOPClassUID"		Operator="And"	Modifier="Not" StringConstantFromRootAttribute="BlendingSoftcopyPresentationStateStorageSOPClassUID"
+	Element="SOPClassUID"		Operator="And"	Modifier="Not" StringConstantFromRootAttribute="AdvancedBlendingSoftcopyPresentationStateStorageSOPClassUID"
+	Element="SOPClassUID"		Operator="And"	Modifier="Not" StringConstantFromRootAttribute="SegmentationStorageSOPClassUID"
+	Element="SOPClassUID"		Operator="And"	Modifier="Not" StringConstantFromRootAttribute="LabelMapSegmentationStorageSOPClassUID"
+	Element="SOPClassUID"		Operator="And"	Modifier="Not" StringConstantFromRootAttribute="SurfaceSegmentationStorageSOPClassUID"
 ConditionEnd
 
 Condition="PhotometricInterpretationIsPaletteColor"
@@ -5308,11 +5326,19 @@ ConditionEnd
 
 Condition="IsHuman"
 	(
-		Element="CodingSchemeDesignator"								ElementPresentWithin="PatientSpeciesCodeSequence"	StringValue="SRT"
 		(
-			Element="CodeValue"											ElementPresentWithin="PatientSpeciesCodeSequence"	StringValue="L-85B00"	# homo sapiens retired
-			Element="CodeValue"							Operator="Or"	ElementPresentWithin="PatientSpeciesCodeSequence"	StringValue="L-85003"	# homo sapiens
-		) Operator="And"
+			Element="CodingSchemeDesignator"								ElementPresentWithin="PatientSpeciesCodeSequence"	StringValue="SRT"
+			(
+				Element="CodeValue"											ElementPresentWithin="PatientSpeciesCodeSequence"	StringValue="L-85B00"	# homo sapiens retired
+				Element="CodeValue"							Operator="Or"	ElementPresentWithin="PatientSpeciesCodeSequence"	StringValue="L-85003"	# homo sapiens
+			) Operator="And"
+		)
+		(
+			Element="CodingSchemeDesignator"								ElementPresentWithin="PatientSpeciesCodeSequence"	StringValue="SCT"
+			(
+				Element="CodeValue"											ElementPresentWithin="PatientSpeciesCodeSequence"	StringValue="337915000"	# homo sapiens
+			) Operator="And"
+		) Operator="Or"
 	)
 	(
 		Element="PatientSpeciesDescription"								Modifier="Not" ElementPresent=""
@@ -5330,11 +5356,19 @@ ConditionEnd
 
 Condition="IsAnimal"
 	(
-		Element="CodingSchemeDesignator"								ElementPresentWithin="PatientSpeciesCodeSequence"	StringValue="SRT"
 		(
-			Element="CodeValue"											ElementPresentWithin="PatientSpeciesCodeSequence"	StringValue="L-85B00"	# homo sapiens retired
-			Element="CodeValue"							Operator="Or"	ElementPresentWithin="PatientSpeciesCodeSequence"	StringValue="L-85003"	# homo sapiens
-		) Operator="And"
+			Element="CodingSchemeDesignator"								ElementPresentWithin="PatientSpeciesCodeSequence"	StringValue="SRT"
+			(
+				Element="CodeValue"											ElementPresentWithin="PatientSpeciesCodeSequence"	StringValue="L-85B00"	# homo sapiens retired
+				Element="CodeValue"							Operator="Or"	ElementPresentWithin="PatientSpeciesCodeSequence"	StringValue="L-85003"	# homo sapiens
+			) Operator="And"
+		)
+		(
+			Element="CodingSchemeDesignator"								ElementPresentWithin="PatientSpeciesCodeSequence"	StringValue="SCT"
+			(
+				Element="CodeValue"											ElementPresentWithin="PatientSpeciesCodeSequence"	StringValue="337915000"	# homo sapiens
+			) Operator="And"
+		) Operator="Or"
 	) Modifier="Not"
 	(
 		Element="PatientSpeciesDescription"								ElementPresent=""
@@ -5354,23 +5388,32 @@ Condition="IsAnimalAndPatientSpeciesCodeSequenceAbsent"
 	Element="PatientSpeciesCodeSequence"				Modifier="Not" ElementPresent=""
 	(
 		(
-			Element="CodingSchemeDesignator"							ElementPresentWithin="PatientSpeciesCodeSequence"	StringValue="SRT"
 			(
+				Element="CodingSchemeDesignator"								ElementPresentWithin="PatientSpeciesCodeSequence"	StringValue="SRT"
 				(
-					Element="CodeValue"									ElementPresentWithin="PatientSpeciesCodeSequence"	StringValue="L-85B00"	# homo sapiens retired
-					Element="CodeValue"					Operator="Or"	ElementPresentWithin="PatientSpeciesCodeSequence"	StringValue="L-85003"	# homo sapiens
-				) Modifier="Not"
-			) Operator="And"
-		) Operator="Or"
-		Element="PatientSpeciesDescription"								ElementPresent=""
-		Element="PatientBreedDescription"				Operator="Or"	ElementPresent=""
-		Element="PatientBreedCodeSequence"				Operator="Or"	ElementPresent=""
-		Element="BreedRegistrationSequence"				Operator="Or"	ElementPresent=""
-		Element="StrainDescription"						Operator="Or"	ElementPresent=""
-		Element="StrainNomenclature"					Operator="Or"	ElementPresent=""
-		Element="StrainCodeSequence"					Operator="Or"	ElementPresent=""
-		Element="StrainAdditionalInformation"			Operator="Or"	ElementPresent=""
-		Element="StrainStockSequence"					Operator="Or"	ElementPresent=""
+					Element="CodeValue"											ElementPresentWithin="PatientSpeciesCodeSequence"	StringValue="L-85B00"	# homo sapiens retired
+					Element="CodeValue"							Operator="Or"	ElementPresentWithin="PatientSpeciesCodeSequence"	StringValue="L-85003"	# homo sapiens
+				) Operator="And"
+			)
+			(
+				Element="CodingSchemeDesignator"								ElementPresentWithin="PatientSpeciesCodeSequence"	StringValue="SCT"
+				(
+					Element="CodeValue"											ElementPresentWithin="PatientSpeciesCodeSequence"	StringValue="337915000"	# homo sapiens
+				) Operator="And"
+			) Operator="Or"
+		) Modifier="Not"
+		(
+			Element="PatientSpeciesDescription"								ElementPresent=""
+			Element="PatientSpeciesCodeSequence"			Operator="Or"	ElementPresent=""
+			Element="PatientBreedDescription"				Operator="Or"	ElementPresent=""
+			Element="PatientBreedCodeSequence"				Operator="Or"	ElementPresent=""
+			Element="BreedRegistrationSequence"				Operator="Or"	ElementPresent=""
+			Element="StrainDescription"						Operator="Or"	ElementPresent=""
+			Element="StrainNomenclature"					Operator="Or"	ElementPresent=""
+			Element="StrainCodeSequence"					Operator="Or"	ElementPresent=""
+			Element="StrainAdditionalInformation"			Operator="Or"	ElementPresent=""
+			Element="StrainStockSequence"					Operator="Or"	ElementPresent=""
+		) Operator="And"
 	) Operator="And"
 ConditionEnd
 
@@ -5378,23 +5421,32 @@ Condition="IsAnimalAndPatientSpeciesDescriptionAbsent"
 	Element="PatientSpeciesDescription"					Modifier="Not" ElementPresent=""
 	(
 		(
-			Element="CodingSchemeDesignator"							ElementPresentWithin="PatientSpeciesCodeSequence"	StringValue="SRT"
 			(
+				Element="CodingSchemeDesignator"								ElementPresentWithin="PatientSpeciesCodeSequence"	StringValue="SRT"
 				(
-					Element="CodeValue"									ElementPresentWithin="PatientSpeciesCodeSequence"	StringValue="L-85B00"	# homo sapiens retired
-					Element="CodeValue"					Operator="Or"	ElementPresentWithin="PatientSpeciesCodeSequence"	StringValue="L-85003"	# homo sapiens
-				) Modifier="Not"
-			) Operator="And"
-		) Operator="Or"
-		Element="PatientSpeciesCodeSequence"							ElementPresent=""
-		Element="PatientBreedDescription"				Operator="Or"	ElementPresent=""
-		Element="PatientBreedCodeSequence"				Operator="Or"	ElementPresent=""
-		Element="BreedRegistrationSequence"				Operator="Or"	ElementPresent=""
-		Element="StrainDescription"						Operator="Or"	ElementPresent=""
-		Element="StrainNomenclature"					Operator="Or"	ElementPresent=""
-		Element="StrainCodeSequence"					Operator="Or"	ElementPresent=""
-		Element="StrainAdditionalInformation"			Operator="Or"	ElementPresent=""
-		Element="StrainStockSequence"					Operator="Or"	ElementPresent=""
+					Element="CodeValue"											ElementPresentWithin="PatientSpeciesCodeSequence"	StringValue="L-85B00"	# homo sapiens retired
+					Element="CodeValue"							Operator="Or"	ElementPresentWithin="PatientSpeciesCodeSequence"	StringValue="L-85003"	# homo sapiens
+				) Operator="And"
+			)
+			(
+				Element="CodingSchemeDesignator"								ElementPresentWithin="PatientSpeciesCodeSequence"	StringValue="SCT"
+				(
+					Element="CodeValue"											ElementPresentWithin="PatientSpeciesCodeSequence"	StringValue="337915000"	# homo sapiens
+				) Operator="And"
+			) Operator="Or"
+		) Modifier="Not"
+		(
+			Element="PatientSpeciesDescription"								ElementPresent=""
+			Element="PatientSpeciesCodeSequence"			Operator="Or"	ElementPresent=""
+			Element="PatientBreedDescription"				Operator="Or"	ElementPresent=""
+			Element="PatientBreedCodeSequence"				Operator="Or"	ElementPresent=""
+			Element="BreedRegistrationSequence"				Operator="Or"	ElementPresent=""
+			Element="StrainDescription"						Operator="Or"	ElementPresent=""
+			Element="StrainNomenclature"					Operator="Or"	ElementPresent=""
+			Element="StrainCodeSequence"					Operator="Or"	ElementPresent=""
+			Element="StrainAdditionalInformation"			Operator="Or"	ElementPresent=""
+			Element="StrainStockSequence"					Operator="Or"	ElementPresent=""
+		) Operator="And"
 	) Operator="And"
 ConditionEnd
 
@@ -5402,24 +5454,32 @@ Condition="IsAnimalAndPatientBreedCodeSequenceEmpty"
 	Element="PatientBreedCodeSequence"					Modifier="Not" SequenceHasItems=""
 	(
 		(
-			Element="CodingSchemeDesignator"							ElementPresentWithin="PatientSpeciesCodeSequence"	StringValue="SRT"
 			(
+				Element="CodingSchemeDesignator"								ElementPresentWithin="PatientSpeciesCodeSequence"	StringValue="SRT"
 				(
-					Element="CodeValue"									ElementPresentWithin="PatientSpeciesCodeSequence"	StringValue="L-85B00"	# homo sapiens retired
-					Element="CodeValue"					Operator="Or"	ElementPresentWithin="PatientSpeciesCodeSequence"	StringValue="L-85003"	# homo sapiens
-				) Modifier="Not"
-			) Operator="And"
-		) Operator="Or"
-		Element="PatientSpeciesDescription"								ElementPresent=""
-		Element="PatientSpeciesCodeSequence"			Operator="Or"	ElementPresent=""
-		Element="PatientBreedDescription"				Operator="Or"	ElementPresent=""
-		Element="PatientBreedCodeSequence"				Operator="Or"	ElementPresent=""
-		Element="BreedRegistrationSequence"				Operator="Or"	ElementPresent=""
-		Element="StrainDescription"						Operator="Or"	ElementPresent=""
-		Element="StrainNomenclature"					Operator="Or"	ElementPresent=""
-		Element="StrainCodeSequence"					Operator="Or"	ElementPresent=""
-		Element="StrainAdditionalInformation"			Operator="Or"	ElementPresent=""
-		Element="StrainStockSequence"					Operator="Or"	ElementPresent=""
+					Element="CodeValue"											ElementPresentWithin="PatientSpeciesCodeSequence"	StringValue="L-85B00"	# homo sapiens retired
+					Element="CodeValue"							Operator="Or"	ElementPresentWithin="PatientSpeciesCodeSequence"	StringValue="L-85003"	# homo sapiens
+				) Operator="And"
+			)
+			(
+				Element="CodingSchemeDesignator"								ElementPresentWithin="PatientSpeciesCodeSequence"	StringValue="SCT"
+				(
+					Element="CodeValue"											ElementPresentWithin="PatientSpeciesCodeSequence"	StringValue="337915000"	# homo sapiens
+				) Operator="And"
+			) Operator="Or"
+		) Modifier="Not"
+		(
+			Element="PatientSpeciesDescription"								ElementPresent=""
+			Element="PatientSpeciesCodeSequence"			Operator="Or"	ElementPresent=""
+			Element="PatientBreedDescription"				Operator="Or"	ElementPresent=""
+			Element="PatientBreedCodeSequence"				Operator="Or"	ElementPresent=""
+			Element="BreedRegistrationSequence"				Operator="Or"	ElementPresent=""
+			Element="StrainDescription"						Operator="Or"	ElementPresent=""
+			Element="StrainNomenclature"					Operator="Or"	ElementPresent=""
+			Element="StrainCodeSequence"					Operator="Or"	ElementPresent=""
+			Element="StrainAdditionalInformation"			Operator="Or"	ElementPresent=""
+			Element="StrainStockSequence"					Operator="Or"	ElementPresent=""
+		) Operator="And"
 	) Operator="And"
 ConditionEnd
 
@@ -6458,6 +6518,10 @@ Condition="ReferencedSeriesSequencePresentAndInstanceDoesNotReferencesInstances"
 		Element="SourceInstanceSequence"		Operator="Or"	SequencePresentInPathFromRootHasItems="SharedFunctionalGroupsSequence"
 		Element="SourceInstanceSequence"		Operator="Or"	SequencePresentInPathFromRootFirstItemHasItems="PerFrameFunctionalGroupsSequence"
 
+		Element="ConversionSourceAttributesSequence"		Operator="Or"	SequenceHasItems=""
+		Element="ConversionSourceAttributesSequence"		Operator="Or"	SequencePresentInPathFromRootHasItems="SharedFunctionalGroupsSequence"
+		Element="ConversionSourceAttributesSequence"		Operator="Or"	SequencePresentInPathFromRootFirstItemHasItems="PerFrameFunctionalGroupsSequence"
+
 		Element="ReferencedImageSequence"		Operator="Or"	SequenceHasItems=""
 		Element="ReferencedImageSequence"		Operator="Or"	SequencePresentInPathFromRootHasItems="SharedFunctionalGroupsSequence"
 		Element="ReferencedImageSequence"		Operator="Or"	SequencePresentInPathFromRootFirstItemHasItems="PerFrameFunctionalGroupsSequence"
@@ -6473,6 +6537,14 @@ Condition="ReferencedSeriesSequencePresentAndInstanceDoesNotReferencesInstances"
 		Element="SegmentSurfaceSourceInstanceSequence"		Operator="Or"	SequencePresentInPathFromRootHasItems="SegmentSequence"
 
 		Element="ReferencedSOPInstanceUID"		Operator="Or"	SequencePresentInPathFromRootHasItems="SegmentSequence"
+
+		Element="ReferencedImageSequence"		Operator="Or"	SequencePresentInPathFromRootHasItems="StructuredDisplayImageBoxSequence"
+
+		Element="ReferencedImageSequence"		Operator="Or"	SequencePresentInPathFromRootHasItems="MultiFramePresentationSequence"
+
+		Element="ReferencedImageSequence"		Operator="Or"	SequencePresentInPathFromRootHasItems="VolumetricPresentationInputSetSequence"
+
+		Element="ReferencedImageSequence"		Operator="Or"	SequencePresentInPathFromRootHasItems="AdvancedBlendingSequence"
 	) Operator="And" Modifier="Not"
 ConditionEnd
 
@@ -7267,6 +7339,19 @@ ConditionEnd
 
 Condition="ImageTypeValue3IsVolume"
 	Element="ImageType"				ValueSelector="2" StringValueFromRootAttribute="VOLUME"
+ConditionEnd
+
+Condition="ImageTypeValue3IsVolumeOrThumbnail"
+	Element="ImageType"				ValueSelector="2" StringValueFromRootAttribute="VOLUME"
+	Element="ImageType"				ValueSelector="2" StringValueFromRootAttribute="THUMBNAIL"
+ConditionEnd
+
+Condition="ImageTypeValue3IsVolumeOrThumbnailAndPyramidUIDIsNotPresent"
+	(
+		Element="ImageType"			ValueSelector="2" StringValueFromRootAttribute="VOLUME"
+		Element="ImageType"			ValueSelector="2" StringValueFromRootAttribute="THUMBNAIL"
+	)
+	Element="PyramidUID"			Operator="And"	Modifier="Not"	"ElementPresent=""
 ConditionEnd
 
 Condition="ImageTypeValue3IsTissueIntensity"
@@ -8396,4 +8481,8 @@ Condition="UnwantedOpticalPathAndICCProfileModules"
 		Element="SOPClassUID"								StringConstantFromRootAttribute="VisibleLightMicroscopicImageStorageSOPClassUID"
 		Element="SOPClassUID"				Operator="Or"	StringConstantFromRootAttribute="VisibleLightSlideCoordinatesMicroscopicImageStorageSOPClassUID"
 	) Operator="And"
+ConditionEnd
+
+Condition="AcquisitionUIDIsNotPresent"
+	Element="AcquisitionUID"			Modifier="Not"	"ElementPresent=""
 ConditionEnd

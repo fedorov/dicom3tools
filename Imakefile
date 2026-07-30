@@ -32,6 +32,7 @@ ARCHIVEWINEXEFILES = \
 	appsrc/dcfile/dciodvfy.exe \
 	appsrc/dcfile/dckey.exe \
 	appsrc/dcfile/dccidump.exe \
+	appsrc/dcfile/dccsdump.exe \
 	appsrc/dcfile/dcsrdump.exe \
 	appsrc/dcfile/dcstats.exe \
 	appsrc/dcfile/dctable.exe \
@@ -52,6 +53,7 @@ ARCHIVEMACEXEFILES = \
 	appsrc/dcfile/dciodvfy \
 	appsrc/dcfile/dckey \
 	appsrc/dcfile/dccidump \
+	appsrc/dcfile/dccsdump \
 	appsrc/dcfile/dcsrdump \
 	appsrc/dcfile/dcstats \
 	appsrc/dcfile/dctable \

@@ -700,6 +700,10 @@ ModuleEnd
 Module="WG26SP2025WSI"
 	Name="DimensionOrganizationType"					Type="3"	StringEnumValues="DimensionOrganizationTypeTILED_FULL"
 	Name="TotalPixelMatrixFocalPlanes"					Type="1"	BinaryEnumValues="One"
+	
+	Verify="AcquisitionUID"								Type="1C"	Condition="AcquisitionUIDIsNotPresent"	ThenWarningMessage="AcquisitionUID missing" ShowValueWithMessage="false"
+	Verify="PyramidUID"									Type="1C"	Condition="ImageTypeValue3IsVolumeOrThumbnailAndPyramidUIDIsNotPresent"	ThenWarningMessage="PyramidUID missing for Volume or Thumbnail ImageType" ShowValueWithMessage="false"
+
 	Name="ConcatenationUID"								Type="1C"	Condition="Never"
 	Sequence="SpecimenDescriptionSequence"					Type="1"	VM="1-n"
 		Sequence="SpecimenTypeCodeSequence"					Type="1"	VM="1"
@@ -710,7 +714,7 @@ Module="WG26SP2025WSI"
 				InvokeMacro="ContentItemMacro"
 			SequenceEnd
 		SequenceEnd
-		InvokeMacro="PrimaryAnatomicStructureMacro" 
+		InvokeMacro="PrimaryAnatomicStructureMandatoryMacro" 
 	SequenceEnd
 ModuleEnd
 

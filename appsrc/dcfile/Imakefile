@@ -158,14 +158,17 @@ OBJSDCSRDUMP = dcsrdump.o
 SRCSDCCIDUMP = dccidump.cc
 OBJSDCCIDUMP = dccidump.o
 
+SRCSDCCSDUMP = dccsdump.cc
+OBJSDCCSDUMP = dccsdump.o
+
 SRCSDCRMMETA = dcrmmeta.cc
 OBJSDCRMMETA = dcrmmeta.o
 
 SRCSDCENTVFY = dcentvfy.cc
 OBJSDCENTVFY = dcentvfy.o
 
-CPLUSPLUS_SRCS = $(SRCSDCCREATE) $(SRCSDCENTVFY) $(SRCSDCLUTMIX) $(SRCSDCUIDCHG) $(SRCSDCDTCHG) $(SRCSDCLUTBURN) $(SRCSDCTOPDF) $(SRCSPDFTODC) $(SRCSPGXTODC) $(SRCSDCENCAP) $(SRCSDCBURN) $(SRCSRAWFTODC) $(SRCSDCCOMB) $(SRCSDCUNCAT) $(SRCSDCSRMRG) $(SRCSDCOSTOSR) $(SRCSDCRMMETA) $(SRCSDCSRDUMP) $(SRCSDCCIDUMP) $(SRCSDCDECMPR) $(SRCSDCSUB) $(SRCSDCSORT) $(SRCSDCPROJ) $(SRCSDCARITH) $(SRCSDCTOPGM8) $(SRCSDCTOPGX) $(SRCSDCPOST) $(SRCSDCTABLE) $(SRCSDCMKPRES) $(SRCSDCORTHO) $(SRCSANTODC) $(SRCSCP) $(SRCSDICT) $(SRCSDIRDMP) $(SRCSDUMP) $(SRCSFILE) $(SRCSHIST) $(SRCSKEY) $(SRCSMERGE) $(SRCSPOSN) $(SRCSIODVFY) $(SRCSSMPTE) $(SRCSBRIGGS) $(SRCSSQEXTR) $(SRCSSTATS) $(SRCSTORAW) $(SRCSTOPNM) $(SRCSPBMTOOVL) $(SRCSPNMTO) $(SRCSRAWTO) $(SRCSLUTDMP) $(SRCSINFO)
-OBJS           = $(OBJSDCCREATE) $(OBJSDCENTVFY) $(OBJSDCLUTMIX) $(OBJSDCUIDCHG) $(OBJSDCDTCHG) $(OBJSDCLUTBURN) $(OBJSDCTOPDF) $(OBJSPDFTODC) $(OBJSPGXTODC) $(OBJSDCENCAP) $(OBJSDCBURN) $(OBJSRAWFTODC) $(OBJSDCCOMB) $(OBJSDCUNCAT) $(OBJSDCSRMRG) $(OBJSDCOSTOSR) $(OBJSDCRMMETA) $(OBJSDCSRDUMP) $(OBJSDCCIDUMP) $(OBJSDCDECMPR) $(OBJSDCSUB) $(OBJSDCSORT) $(OBJSDCPROJ) $(OBJSDCARITH) $(OBJSDCTOPGM8) $(OBJSDCTOPGX) $(OBJSDCPOST) $(OBJSDCTABLE) $(OBJSDCMKPRES) $(OBJSDCORTHO) $(OBJSANTODC) $(OBJSCP) $(OBJSDICT) $(OBJSDIRDMP) $(OBJSDUMP) $(OBJSFILE) $(OBJSHIST) $(OBJSKEY) $(OBJSIODVFY) $(OBJSMERGE) $(OBJSPOSN) $(OBJSSMPTE) $(OBJSBRIGGS) $(OBJSSQEXTR) $(OBJSSTATS) $(OBJSTORAW) $(OBJSTOPNM) $(OBJSPBMTOOVL) $(OBJSPNMTO) $(OBJSRAWTO) $(OBJSLUTDMP) $(OBJSINFO)
+CPLUSPLUS_SRCS = $(SRCSDCCREATE) $(SRCSDCENTVFY) $(SRCSDCLUTMIX) $(SRCSDCUIDCHG) $(SRCSDCDTCHG) $(SRCSDCLUTBURN) $(SRCSDCTOPDF) $(SRCSPDFTODC) $(SRCSPGXTODC) $(SRCSDCENCAP) $(SRCSDCBURN) $(SRCSRAWFTODC) $(SRCSDCCOMB) $(SRCSDCUNCAT) $(SRCSDCSRMRG) $(SRCSDCOSTOSR) $(SRCSDCRMMETA) $(SRCSDCSRDUMP) $(SRCSDCCIDUMP) $(SRCSDCCSDUMP) $(SRCSDCDECMPR) $(SRCSDCSUB) $(SRCSDCSORT) $(SRCSDCPROJ) $(SRCSDCARITH) $(SRCSDCTOPGM8) $(SRCSDCTOPGX) $(SRCSDCPOST) $(SRCSDCTABLE) $(SRCSDCMKPRES) $(SRCSDCORTHO) $(SRCSANTODC) $(SRCSCP) $(SRCSDICT) $(SRCSDIRDMP) $(SRCSDUMP) $(SRCSFILE) $(SRCSHIST) $(SRCSKEY) $(SRCSMERGE) $(SRCSPOSN) $(SRCSIODVFY) $(SRCSSMPTE) $(SRCSBRIGGS) $(SRCSSQEXTR) $(SRCSSTATS) $(SRCSTORAW) $(SRCSTOPNM) $(SRCSPBMTOOVL) $(SRCSPNMTO) $(SRCSRAWTO) $(SRCSLUTDMP) $(SRCSINFO)
+OBJS           = $(OBJSDCCREATE) $(OBJSDCENTVFY) $(OBJSDCLUTMIX) $(OBJSDCUIDCHG) $(OBJSDCDTCHG) $(OBJSDCLUTBURN) $(OBJSDCTOPDF) $(OBJSPDFTODC) $(OBJSPGXTODC) $(OBJSDCENCAP) $(OBJSDCBURN) $(OBJSRAWFTODC) $(OBJSDCCOMB) $(OBJSDCUNCAT) $(OBJSDCSRMRG) $(OBJSDCOSTOSR) $(OBJSDCRMMETA) $(OBJSDCSRDUMP) $(OBJSDCCIDUMP) $(OBJSDCCSDUMP) $(OBJSDCDECMPR) $(OBJSDCSUB) $(OBJSDCSORT) $(OBJSDCPROJ) $(OBJSDCARITH) $(OBJSDCTOPGM8) $(OBJSDCTOPGX) $(OBJSDCPOST) $(OBJSDCTABLE) $(OBJSDCMKPRES) $(OBJSDCORTHO) $(OBJSANTODC) $(OBJSCP) $(OBJSDICT) $(OBJSDIRDMP) $(OBJSDUMP) $(OBJSFILE) $(OBJSHIST) $(OBJSKEY) $(OBJSIODVFY) $(OBJSMERGE) $(OBJSPOSN) $(OBJSSMPTE) $(OBJSBRIGGS) $(OBJSSQEXTR) $(OBJSSTATS) $(OBJSTORAW) $(OBJSTOPNM) $(OBJSPBMTOOVL) $(OBJSPNMTO) $(OBJSRAWTO) $(OBJSLUTDMP) $(OBJSINFO)
 
 AllTarget(dccreate)
 NormalCCProgramTarget(dccreate,$(OBJSDCCREATE),$(PROJECTDCFILEDEPLIBS),$(PROJECTDCFILELIBS),-lm)
@@ -266,6 +269,11 @@ AllTarget(dccidump)
 NormalCCProgramTarget(dccidump,$(OBJSDCCIDUMP),$(PROJECTDCFILEDEPLIBS),$(PROJECTDCFILELIBS),-lm)
 InstallProgram(dccidump,$(INSTALLBINDIR))
 InstallManPage(dccidump,$(INSTALLMANDIR)/man1)
+
+AllTarget(dccsdump)
+NormalCCProgramTarget(dccsdump,$(OBJSDCCSDUMP),$(PROJECTDCFILEDEPLIBS),$(PROJECTDCFILELIBS),-lm)
+InstallProgram(dccsdump,$(INSTALLBINDIR))
+InstallManPage(dccsdump,$(INSTALLMANDIR)/man1)
 
 AllTarget(dcsub)
 NormalCCProgramTarget(dcsub,$(OBJSDCSUB),$(PROJECTDCFILEDEPLIBS),$(PROJECTDCFILELIBS),-lm)
@@ -531,7 +539,7 @@ InstallManPage(dcinfo,$(INSTALLMANDIR)/man1)
 
 DependCCTarget()
 
-test:: testdchist testy2k testpbmtoovl testdcfile testdccp testantodc testpnmtodc testdcdirdmp testdcdump testdciodvfy testdciodvfynew testdcposn testpack testdcsrdump testdcunrgb testdcinfo
+test:: testdchist testy2k testpbmtoovl testdcfile testdccp testantodc testpnmtodc testdcdirdmp testdcdump testdciodvfy testdciodvfynew testdcposn testpack testdcsrdump testdccidump testdccsdump testdcunrgb testdcinfo
 
 testpbmtoovl:
 	@$(TOP)/support/testapp testlist ./pbmtoovl "-overlaygroup 0 -r SOPClassUID 0 -r SOPInstanceUID 0" $(TOP)/images/ovltest $(TOP)/test/$(CURRENT_DIR) compare pbmtoovl
@@ -611,6 +619,14 @@ testdcfile:
 testdcsrdump:
 	@$(TOP)/support/testapp testsrs ./dcsrdump "-identifier"           $(TOP)/images/dicom $(TOP)/test/$(CURRENT_DIR) compare dcsrdump
 
+testdccidump:
+	@$(TOP)/support/testapp testlist ./dccidump "-identifier"           $(TOP)/images/dicom $(TOP)/test/$(CURRENT_DIR) compare dccidump
+	@$(TOP)/support/testapp testsrs  ./dccidump "-identifier"           $(TOP)/images/dicom $(TOP)/test/$(CURRENT_DIR) compare dccidump
+
+testdccsdump:
+	@$(TOP)/support/testapp testlist ./dccsdump "-identifier"           $(TOP)/images/dicom $(TOP)/test/$(CURRENT_DIR) compare dccsdump
+	@$(TOP)/support/testapp testsrs  ./dccsdump "-identifier"           $(TOP)/images/dicom $(TOP)/test/$(CURRENT_DIR) compare dccsdump
+
 testdcdirdmp:
 	@$(TOP)/support/testapp testdirs ./dcdirdmp "-vv"                  $(TOP)/images/dicom $(TOP)/test/$(CURRENT_DIR) compare dcdirdmp
 
@@ -681,7 +697,7 @@ $(TOP)/images/dicom/testrgb:	$(TOP)/images/dicom/testlist
 testdcunrgb:	$(TOP)/images/dicom/testrgb
 	@$(TOP)/support/testapp testrgb ./dcunrgb.script ""      $(TOP)/images/dicom $(TOP)/test/$(CURRENT_DIR) compare todc
 
-test.create:: testdchist.create testy2k.create testpbmtoovl.create testdcfile.create testdccp.create testantodc.create testpnmtodc.create testdcdirdmp.create testdcdump.create testdciodvfy.create testdciodvfynew.create testdcposn.create testpack.create testdcsrdump.create testdcunrgb.create testdcinfo.create
+test.create:: testdchist.create testy2k.create testpbmtoovl.create testdcfile.create testdccp.create testantodc.create testpnmtodc.create testdcdirdmp.create testdcdump.create testdciodvfy.create testdciodvfynew.create testdcposn.create testpack.create testdcsrdump.create testdccidump.create testdccsdump.create testdcunrgb.create testdcinfo.create
 
 testy2k.create:
 	./testy2k.sh $(TOP)/test/$(CURRENT_DIR) create
@@ -760,6 +776,14 @@ testdcfile.create:
 
 testdcsrdump.create:
 	@$(TOP)/support/testapp testsrs ./dcsrdump "-identifier"           $(TOP)/images/dicom $(TOP)/test/$(CURRENT_DIR) create dcsrdump
+
+testdccidump.create:
+	@$(TOP)/support/testapp testlist ./dccidump "-identifier"           $(TOP)/images/dicom $(TOP)/test/$(CURRENT_DIR) create dccidump
+	@$(TOP)/support/testapp testsrs ./dccidump "-identifier"           $(TOP)/images/dicom $(TOP)/test/$(CURRENT_DIR) create dccidump
+
+testdccsdump.create:
+	@$(TOP)/support/testapp testlist ./dccsdump "-identifier"           $(TOP)/images/dicom $(TOP)/test/$(CURRENT_DIR) create dccsdump
+	@$(TOP)/support/testapp testsrs ./dccsdump "-identifier"           $(TOP)/images/dicom $(TOP)/test/$(CURRENT_DIR) create dccsdump
 
 testdcdirdmp.create:
 	@$(TOP)/support/testapp testdirs ./dcdirdmp "-vv"                  $(TOP)/images/dicom $(TOP)/test/$(CURRENT_DIR) create dcdirdmp

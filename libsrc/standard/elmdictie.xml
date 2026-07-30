@@ -518,6 +518,7 @@
 	<DataElementIE><Name>RelatedGeneralSOPClassUID</Name><IE>INSTANCE</IE></DataElementIE>
 	<DataElementIE><Name>OriginalSpecializedSOPClassUID</Name><IE>INSTANCE</IE></DataElementIE>
 	<DataElementIE><Name>SyntheticData</Name><IE>INSTANCE</IE></DataElementIE>
+	<DataElementIE><Name>SensitiveContentCodeSequence</Name><IE>INSTANCE</IE></DataElementIE>
 	<DataElementIE><Name>CodingSchemeIdentificationSequence</Name><IE>INSTANCE</IE></DataElementIE>
 	<DataElementIE><Name>ContextGroupIdentificationSequence</Name><IE>INSTANCE</IE></DataElementIE>
 	<DataElementIE><Name>MappingResourceIdentificationSequence</Name><IE>INSTANCE</IE></DataElementIE>

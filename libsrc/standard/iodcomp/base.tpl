@@ -897,6 +897,74 @@ CompositeIOD="EncapsulatedSTL"					Condition="EncapsulatedSTLInstance"
 		Module="EncapsulatedDocumentSTLPseudo"	Usage="M"
 		Module="Manufacturing3DModel"			Usage="M"
 		Module="SOPCommon"						Usage="M"
+		Module="ICCProfile"						Usage="U"	Condition="NeedModuleICCProfile"
+		Module="CommonInstanceReference"		Usage="C"	Condition="InstanceReferencesInstancesOrNeedModuleCommonInstanceReference"
+	InformationEntityEnd
+CompositeIODEnd
+
+CompositeIOD="EncapsulatedOBJ"					Condition="EncapsulatedOBJInstance"
+	InformationEntity="File"
+		Module="FileMetaInformation"			Usage="C"	Condition="NeedModuleFileMetaInformation"
+	InformationEntityEnd
+	InformationEntity="Patient"
+		Module="Patient"						Usage="M"
+		Module="ClinicalTrialSubject"			Usage="U"	Condition="NeedModuleClinicalTrialSubject"
+	InformationEntityEnd
+	InformationEntity="Study"
+		Module="GeneralStudy"					Usage="M"
+		Module="PatientStudy"					Usage="U"	# no condition ... all attributes type 3
+		Module="ClinicalTrialStudy"				Usage="U"	Condition="NeedModuleClinicalTrialStudy"
+	InformationEntityEnd
+	InformationEntity="Series"
+		Module="EncapsulatedDocumentSeries"		Usage="M"
+		Module="EncapsulatedDocumentOBJSeriesPseudo"	Usage="M"
+		Module="ClinicalTrialSeries"			Usage="U"	Condition="NeedModuleClinicalTrialSeries"
+	InformationEntityEnd
+	InformationEntity="FrameOfReference"
+		Module="FrameOfReference"				Usage="M"
+	InformationEntityEnd
+	InformationEntity="Equipment"
+		Module="GeneralEquipment"				Usage="M"
+		Module="EnhancedGeneralEquipment"		Usage="M"
+	InformationEntityEnd
+	InformationEntity="EncapsulatedDocument"
+		Module="EncapsulatedDocument"			Usage="M"
+		Module="EncapsulatedDocumentOBJPseudo"	Usage="M"
+		Module="Manufacturing3DModel"			Usage="M"
+		Module="SOPCommon"						Usage="M"
+		Module="ICCProfile"						Usage="M"
+		Module="CommonInstanceReference"		Usage="C"	Condition="InstanceReferencesInstancesOrNeedModuleCommonInstanceReference"
+	InformationEntityEnd
+CompositeIODEnd
+
+CompositeIOD="EncapsulatedMTL"					Condition="EncapsulatedMTLInstance"
+	InformationEntity="File"
+		Module="FileMetaInformation"			Usage="C"	Condition="NeedModuleFileMetaInformation"
+	InformationEntityEnd
+	InformationEntity="Patient"
+		Module="Patient"						Usage="M"
+		Module="ClinicalTrialSubject"			Usage="U"	Condition="NeedModuleClinicalTrialSubject"
+	InformationEntityEnd
+	InformationEntity="Study"
+		Module="GeneralStudy"					Usage="M"
+		Module="PatientStudy"					Usage="U"	# no condition ... all attributes type 3
+		Module="ClinicalTrialStudy"				Usage="U"	Condition="NeedModuleClinicalTrialStudy"
+	InformationEntityEnd
+	InformationEntity="Series"
+		Module="EncapsulatedDocumentSeries"		Usage="M"
+		Module="EncapsulatedDocumentMTLSeriesPseudo"	Usage="M"
+		Module="ClinicalTrialSeries"			Usage="U"	Condition="NeedModuleClinicalTrialSeries"
+	InformationEntityEnd
+	InformationEntity="Equipment"
+		Module="GeneralEquipment"				Usage="M"
+		Module="EnhancedGeneralEquipment"		Usage="M"
+	InformationEntityEnd
+	InformationEntity="EncapsulatedDocument"
+		Module="EncapsulatedDocument"			Usage="M"
+		Module="EncapsulatedDocumentMTLPseudo"	Usage="M"
+		Module="Manufacturing3DModel"			Usage="M"
+		Module="SOPCommon"						Usage="M"
+		Module="ICCProfile"						Usage="M"
 		Module="CommonInstanceReference"		Usage="C"	Condition="InstanceReferencesInstancesOrNeedModuleCommonInstanceReference"
 	InformationEntityEnd
 CompositeIODEnd

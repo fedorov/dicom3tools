@@ -178,6 +178,8 @@ DirectoryRecord="KEY OBJECT DOC"	Name="KeyObjectSelectionDocumentStorage"			Desc
 DirectoryRecord="ENCAP DOC"		Name="EncapsulatedPDFStorage"					Desc="Encapsulated PDF Storage"					Uid="1.2.840.10008.5.1.4.1.1.104.1"
 DirectoryRecord="ENCAP DOC"		Name="EncapsulatedCDAStorage"					Desc="Encapsulated CDA Storage"					Uid="1.2.840.10008.5.1.4.1.1.104.2"
 DirectoryRecord="ENCAP DOC"		Name="EncapsulatedSTLStorage"					Desc="Encapsulated STL Storage"					Uid="1.2.840.10008.5.1.4.1.1.104.3"
+DirectoryRecord="ENCAP DOC"		Name="EncapsulatedOBJStorage"					Desc="Encapsulated OBJ Storage"					Uid="1.2.840.10008.5.1.4.1.1.104.4"
+DirectoryRecord="ENCAP DOC"		Name="EncapsulatedMTLStorage"					Desc="Encapsulated MTL Storage"					Uid="1.2.840.10008.5.1.4.1.1.104.5"
 
 DirectoryRecord="IMAGE"			Name="PETImageStorage"							Desc="Positron Emission Tomography Image Storage"		Uid="1.2.840.10008.5.1.4.1.1.128"
 DirectoryRecord="IMAGE"			Name="LegacyConvertedEnhancedPETImageStorage"	Desc="Legacy Converted Enhanced PET Image Storage"		Uid="1.2.840.10008.5.1.4.1.1.128.1"

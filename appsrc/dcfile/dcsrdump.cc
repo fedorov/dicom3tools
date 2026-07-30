@@ -27,7 +27,16 @@ logStringValueOfAttribute(Attribute *a,TextOutputStream &log) {
 static void
 processCodeSequenceItem(AttributeList *list,TextOutputStream &log) {
 	log << "(";
-	logStringValueOfAttribute((*list)[TagFromName(CodeValue)],log);
+	{
+		Attribute *a = (*list)[TagFromName(CodeValue)];
+		if (!a) {	// (000633)
+			a = (*list)[TagFromName(LongCodeValue)];
+			if (!a) {
+				a = (*list)[TagFromName(URNCodeValue)];
+			}
+		}
+		logStringValueOfAttribute(a,log);
+	}
 	log << ",";
 	logStringValueOfAttribute((*list)[TagFromName(CodingSchemeDesignator)],log);
 	log << "," << "\"" ;
