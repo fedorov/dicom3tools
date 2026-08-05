@@ -437,9 +437,7 @@ Date::Date(void)
 	dd=lt->tm_mday;
 	yyyy=lt->tm_year+1900;
 	mm=lt->tm_mon+1;
-	mmm=new char[4];
-	strncpy(mmm,getMMM(),3);
-	mmm[3]=0;
+	mmm=makeMMMFromMM(mm);
 	goodflag=validateDateValues(dd,mm,yyyy);
 #ifdef USEGLIBCTIMEZONE
 #if USEGLIBCTIMEZONE == 1
@@ -463,6 +461,8 @@ Date::Date(void)
 Date&
 Date::operator=(const Date & date)
 {
+	if (this == &date) return *this;
+	delete[] mmm;      // free the buffer this object already owns before replacing it
 	dd=date.getDD();
 	yyyy=date.getYYYY();
 	mm=date.getMM();
@@ -470,6 +470,7 @@ Date::operator=(const Date & date)
 	strncpy(mmm,date.getMMM(),3);
 	mmm[3]=0;
 	goodflag=validateDateValues(dd,mm,yyyy);
+	strncpy(tzo,date.tzo,5);
 	return *this;
 }
 
