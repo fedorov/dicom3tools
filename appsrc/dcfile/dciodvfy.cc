@@ -3425,30 +3425,68 @@ checkConsistencyOfTiledImageGeometry(AttributeList &list,bool verbose,bool newfo
 		}
 		
 		bool isMultiInstanceConcatenation = list[TagFromName(ConcatenationUID)] != NULL && vInConcatenationTotalNumber != 1;
-		
+
+		//cerr << "vNumberOfOpticalPaths = " << vNumberOfOpticalPaths << endl;
+		//cerr << "vTotalPixelMatrixFocalPlanes = " << vTotalPixelMatrixFocalPlanes << endl;
+		//cerr << "numberOfRowsOfTiles = " << numberOfRowsOfTiles << endl;
+		//cerr << "numberOfColumnsOfTiles = " << numberOfColumnsOfTiles << endl;
+		//cerr << "isTiledFull = " << isTiledFull << endl;
+		//cerr << "nPerFrameFunctionalGroupsSequenceItems = " << nPerFrameFunctionalGroupsSequenceItems << endl;
+		//cerr << "vNumberOfFrames = " << vNumberOfFrames << endl;
+		//cerr << "expectedNumberOfFrames = " << expectedNumberOfFrames << endl;
+		//cerr << "isMultiInstanceConcatenation = " << isMultiInstanceConcatenation << endl;
+
 		if (isTiledFull || nPerFrameFunctionalGroupsSequenceItems == vNumberOfFrames) {
-			if (!isMultiInstanceConcatenation && expectedNumberOfFrames != vNumberOfFrames) {	// (000608)
-				if (newformat) {
-					log << EMsgDCF(MMsgDC(NumberOfFramesDoesNotMatchExpectedValueForTiledTotalPixelMatrix),aNumberOfFrames)
-						<< " = <" << vNumberOfFrames
-						<< " > - expected " << expectedNumberOfFrames
-						<< " for " << vNumberOfOpticalPaths << " optical paths"
-						<< ", " << vTotalPixelMatrixFocalPlanes << " focal planes"
-						<< ", " << numberOfRowsOfTiles << " rows of tiles"
-						<< ", " << numberOfColumnsOfTiles << " columns of tiles"
-						<< endl;
+			if (expectedNumberOfFrames != vNumberOfFrames) {
+				if (isMultiInstanceConcatenation) {	// (000608)
+					if (isTiledFull) {	 			// (000642)
+						if (newformat) {
+							log << EMsgDCF(MMsgDC(NumberOfFramesDoesNotMatchExpectedValueForTiledTotalPixelMatrixForTILED_FULLWithConcatenation),aNumberOfFrames)
+								<< " = <" << vNumberOfFrames
+								<< " > - expected " << expectedNumberOfFrames
+								<< " for " << vNumberOfOpticalPaths << " optical paths"
+								<< ", " << vTotalPixelMatrixFocalPlanes << " focal planes"
+								<< ", " << numberOfRowsOfTiles << " rows of tiles"
+								<< ", " << numberOfColumnsOfTiles << " columns of tiles"
+								<< endl;
+						}
+						else {
+							log << EMsgDC(NumberOfFramesDoesNotMatchExpectedValueForTiledTotalPixelMatrixForTILED_FULLWithConcatenation)
+								<< " got " << vNumberOfFrames
+								<< " expected " << expectedNumberOfFrames
+								<< " for " << vNumberOfOpticalPaths << " optical paths"
+								<< ", " << vTotalPixelMatrixFocalPlanes << " focal planes"
+								<< ", " << numberOfRowsOfTiles << " rows of tiles"
+								<< ", " << numberOfColumnsOfTiles << " columns of tiles"
+								<< endl;
+						}
+					}
+					// else OK to have not TILED_FULL concatenation - cannot check total number of frames in concatenation since requires access to other instances
+					// until CP 2540 Total Number of Frames in Concatenation (optional) is added (000643)
 				}
 				else {
-					log << EMsgDC(NumberOfFramesDoesNotMatchExpectedValueForTiledTotalPixelMatrix)
-						<< " got " << vNumberOfFrames
-						<< " expected " << expectedNumberOfFrames
-						<< " for " << vNumberOfOpticalPaths << " optical paths"
-						<< ", " << vTotalPixelMatrixFocalPlanes << " focal planes"
-						<< ", " << numberOfRowsOfTiles << " rows of tiles"
-						<< ", " << numberOfColumnsOfTiles << " columns of tiles"
-						<< endl;
+					if (newformat) {
+						log << EMsgDCF(MMsgDC(NumberOfFramesDoesNotMatchExpectedValueForTiledTotalPixelMatrix),aNumberOfFrames)
+							<< " = <" << vNumberOfFrames
+							<< " > - expected " << expectedNumberOfFrames
+							<< " for " << vNumberOfOpticalPaths << " optical paths"
+							<< ", " << vTotalPixelMatrixFocalPlanes << " focal planes"
+							<< ", " << numberOfRowsOfTiles << " rows of tiles"
+							<< ", " << numberOfColumnsOfTiles << " columns of tiles"
+							<< endl;
+					}
+					else {
+						log << EMsgDC(NumberOfFramesDoesNotMatchExpectedValueForTiledTotalPixelMatrix)
+							<< " got " << vNumberOfFrames
+							<< " expected " << expectedNumberOfFrames
+							<< " for " << vNumberOfOpticalPaths << " optical paths"
+							<< ", " << vTotalPixelMatrixFocalPlanes << " focal planes"
+							<< ", " << numberOfRowsOfTiles << " rows of tiles"
+							<< ", " << numberOfColumnsOfTiles << " columns of tiles"
+							<< endl;
+					}
+					success=false;
 				}
-				success=false;
 			}
 		}
 		// (000626)

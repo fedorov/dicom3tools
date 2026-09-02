@@ -208,6 +208,7 @@ Index="NoTransferSyntaxInMetaHeader"		English="Metaheader present but doesn't co
 Index="Null"					English=""
 Index="NumberOfDimensionIndexValuesDoesNotMatchNumberOfDimensions"	English="Number of values of DimensionIndexValues does not match number of items in DimensionIndexSequence"
 Index="NumberOfFramesDoesNotMatchExpectedValueForTiledTotalPixelMatrix"	English="NumberOfFrames does not match expected value for tiled total pixel matrix"
+Index="NumberOfFramesDoesNotMatchExpectedValueForTiledTotalPixelMatrixForTILED_FULLWithConcatenation"	English="NumberOfFrames does not match expected value for tiled total pixel matrix for TILED_FULL with Concatenation"
 Index="NumberOfPerFrameFunctionalGroupsSequenceItemsDoesNotMatchNumberOfFrames"	English="Number of items in PerFrameFunctionalGroupsSequence does not match NumberOfFrames"
 Index="NumberOfValuesInVectorDoesNotMatchNumberOfFrames"					English="Number of values in vector does not match NumberOfFrames"
 Index="NumericAttributeHasDifferentValueInOneInstanceComparedToTheOther"	English="Numeric attribute has different value"

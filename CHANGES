@@ -1,3 +1,17 @@
+260803:	libsrc/standard/elmdict/other.tpl: Add Agfa private data elements encountered
+
+260729:	libsrc/standard/elmdict/other.tpl: Update and add Sectra private data elements from PACS and VNA Workstation and Core CS 28.1, March 2026
+
+260728:	libsrc/standard/elmdict/other.tpl: Add Infinitt private data elements encountered
+
+260716:	libsrc/standard/elmdict/other.tpl: Add more PixelMed private data elements for TIFF conversion (bugs.mrmf 001474)
+
+260710:	libsrc/src/generic/datetype.cc: Fix memory leak and mmm creation logic (APY e-mail 2026/07/10)
+
+260702:	appsrc/dcfile/dciodvfy.cc,libsrc/src/locale/mesgtext.tpl: Check for TILED_FULL that number of frames matches total expected if Concatenation (000642)
+
+260702:	libsrc/standard/strval/base.tpl: Add 99EVIDENT CSD encountered
+
 260701:	libsrc/standard/strval/base.tpl: Add 99PRAMANA CSD encountered
 
 260627:	libsrc/standard/elmdict/other.tpl: Add more Pramana WSI private data elements encountered

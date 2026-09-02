@@ -301,6 +301,7 @@ StringValues="MiscellaneousCodingSchemeDesignators"	{
 	99_PRAMANA = Pramana,
 	99_Pramana = Pramana,
 	99PRAMANA = Pramana,
+	99EVIDENT = Evident,
 	99mrireface = mri_reface,
 	99Visiopharm = Visiopharm,
 	ACR = ACR Index for Radiological Diagnosis,
