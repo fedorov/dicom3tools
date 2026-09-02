@@ -98,7 +98,7 @@ NR==1	{
 		operator="|"
 	}
 	else {
-		print "Error - Operator \"" operator "\" invalid, assuming or, at line" FNR >"/dev/tty"
+		print "Error - Operator \"" operator "\" invalid, assuming or, at line " FNR >"/dev/tty"
 	}
 
 	modifier=""
@@ -113,7 +113,7 @@ NR==1	{
 		modifier=""
 	}
 	else {
-		print "Error - Modifier \"" modifier "\" invalid, assuming none, at line" FNR >"/dev/tty"
+		print "Error - Modifier \"" modifier "\" invalid, assuming none, at line " FNR >"/dev/tty"
 	}
 
 	selector=""
@@ -126,6 +126,9 @@ NR==1	{
 	}
 	else if (selector == "*") {
 		selector="-1"		# wildcard
+	}
+	else if (selector == "n") {
+		selector="999999"	# last value - currently only actually implemented for StringValue (000648) :(
 	}
 
 	valuepresent=0
@@ -254,7 +257,7 @@ NR==1	{
 		else if (matchoperatorstring == "<=") binaryvaluematchoperator = "LessThanOrEquals"
 		else if (matchoperatorstring == ">") binaryvaluematchoperator = "GreaterThan"
 		else if (matchoperatorstring == ">=") binaryvaluematchoperator = "GreaterThanOrEquals"
-		else print "Error - Binary Match Operator \"" matchoperatorstring "\" invalid at line" FNR >"/dev/tty"
+		else print "Error - Binary Match Operator \"" matchoperatorstring "\" invalid at line " FNR >"/dev/tty"
 	}
 
 	binaryvaluefromrootattribute=""
@@ -272,7 +275,7 @@ NR==1	{
 		else if (matchoperatorstring == "<=") binaryvaluematchoperatorfromrootattribute = "LessThanOrEquals"
 		else if (matchoperatorstring == ">") binaryvaluematchoperatorfromrootattribute = "GreaterThan"
 		else if (matchoperatorstring == ">=") binaryvaluematchoperatorfromrootattribute = "GreaterThanOrEquals"
-		else print "Error - Binary Match Operator \"" matchoperatorstring "\" invalid at line" FNR >"/dev/tty"
+		else print "Error - Binary Match Operator \"" matchoperatorstring "\" invalid at line " FNR >"/dev/tty"
 	}
 
 	tagvalue=""
@@ -452,7 +455,7 @@ NR==1	{
 		operator="|"
 	}
 	else {
-		print "Error - Operator \"" operator "\" invalid, assuming or, at line" FNR >"/dev/tty"
+		print "Error - Operator \"" operator "\" invalid, assuming or, at line " FNR >"/dev/tty"
 	}
 
 	modifier=""
@@ -467,7 +470,7 @@ NR==1	{
 		modifier=""
 	}
 	else {
-		print "Error - Modifier \"" modifier "\" invalid, assuming none, at line" FNR >"/dev/tty"
+		print "Error - Modifier \"" modifier "\" invalid, assuming none, at line " FNR >"/dev/tty"
 	}
 
 	if (role == "define") {

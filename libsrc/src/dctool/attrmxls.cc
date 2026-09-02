@@ -249,16 +249,29 @@ validatePrivate(AttributeList& list,bool verbose,bool newformat,bool allpffgitem
 		Tag t = a->getTag();
 		if (!::loopOverListsInSequencesWithLog(a,verbose,newformat,allpffgitems,log,&::validatePrivate))
 			succeeded=false;
-		if ((t.getGroup() % 2) == 1 && !t.isValidPrivateGroup()) {
-			if (newformat) {
-				log << Attribute::EMsgDCF(MMsgDC(AttributeIsNotInALegalPrivateGroup),a) << endl;
+		if ((t.getGroup() % 2) == 1) {
+			if (!t.isValidPrivateGroup()) {
+				if (newformat) {
+					log << Attribute::EMsgDCF(MMsgDC(AttributeIsNotInALegalPrivateGroup),a) << endl;
+				}
+				else {
+					log << EMsgDC(AttributeIsNotInALegalPrivateGroup) << " - ";
+					t.write(log,list.getDictionary());
+					log << endl;
+				}
+				succeeded=false;
 			}
-			else {
-				log << EMsgDC(AttributeIsNotInALegalPrivateGroup) << " - ";
-				t.write(log,list.getDictionary());
-				log << endl;
+			if (!t.isPrivateOwner() && !t.isPrivateElement() && !t.isLengthElement()) {	// (000644)
+				if (newformat) {
+					log << Attribute::EMsgDCF(MMsgDC(AttributeIsNotALegalPrivateElementOrOwner),a) << endl;
+				}
+				else {
+					log << EMsgDC(AttributeIsNotALegalPrivateElementOrOwner) << " - ";
+					t.write(log,list.getDictionary());
+					log << endl;
+				}
+				succeeded=false;
 			}
-			succeeded=false;
 		}
 		++listi;
 	}

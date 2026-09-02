@@ -411,7 +411,14 @@ static bool StringValueMatch(AttributeList *list,Tag tag,int valueselector,const
 			unsigned start;
 			unsigned end;
 			if (valueselector >= 0) {	// 0 is 1st value
-				if(int(a->getVM()) >= valueselector) {
+				int vm = int(a->getVM());
+				if (valueselector >= 999999) {	// 999999 is flag to use last value (000648)
+//cerr << "StringValueMatch: testing last value" << endl;
+					start=vm-1;
+					end=vm;
+				}
+				else if (vm >= valueselector) {
+//cerr << "StringValueMatch: testing selected value" << dec << valueselector << endl;
 					start=valueselector;
 					end=valueselector+1;
 				}
@@ -419,6 +426,7 @@ static bool StringValueMatch(AttributeList *list,Tag tag,int valueselector,const
 					start=end=0;
 			}
 			else {				// -1 is wildcard
+//cerr << "StringValueMatch: testing all values" << endl;
 				start=0;
 				end=a->getVM();
 			}
@@ -428,7 +436,7 @@ static bool StringValueMatch(AttributeList *list,Tag tag,int valueselector,const
 //cerr << "StringValueMatch: testing value number=" << dec << start << endl;
 //cerr << "StringValueMatch: testing value <" << value << ">" << endl;
 					if (strcmp(value,string) == 0)  {
-//cerr << "StringValueMatch: matched at value# " << dec << start << endl;
+//cerr << "StringValueMatch: matched at number=" << dec << start << endl;
 						match=true;
 					}
 					delete[] value;	// correct: getValue() returns a copy
@@ -437,6 +445,7 @@ static bool StringValueMatch(AttributeList *list,Tag tag,int valueselector,const
 			}
 		}
 	}
+//cerr << endl;
 	return match;
 }
 

@@ -529,7 +529,7 @@ checkUIDs(AttributeList &list,bool verbose,bool newformat,bool allpffgitems,Text
 				char *value;
 				if (a->getValue(i,value)) {
 					if (value && strlen(value) >= 2) {
-						if (strncmp(value,"1.",2) != 0 && strncmp(value,"2.",2) != 0) {
+						if (strncmp(value,"0.",2) != 0 && strncmp(value,"1.",2) != 0 && strncmp(value,"2.",2) != 0) {	// (000651)
 							if (newformat) {
 								log << EMsgDCF(MMsgDC(IllegalRootForUID),a) << " = <" << value << ">" << endl;
 							}
@@ -540,6 +540,95 @@ checkUIDs(AttributeList &list,bool verbose,bool newformat,bool allpffgitems,Text
 							}
 							success = false;
 						}
+						// (000651)
+						// ISO 9834-1 ITU T Rec X.660 Annex A.3.2 "Six arcs are specified from the node with the primary integer value 0"
+						// makes unnecessary to check for ISO 9834-1 ITU T Rec X.660 Section 7.2.6 "the arcs beneath the root arcs 0 and 1 are restricted to forty arcs with primary integer values 0 to 39"
+						else if (strncmp(value,"0.",2) == 0
+							  && strncmp(value,"0.0.",4) != 0
+							  && strncmp(value,"0.1.",4) != 0
+							  && strncmp(value,"0.2.",4) != 0
+							  && strncmp(value,"0.3.",4) != 0
+							  && strncmp(value,"0.4.",4) != 0
+							  && strncmp(value,"0.5.",4) != 0
+						  ) {
+							if (newformat) {
+								log << EMsgDCF(MMsgDC(IllegalITUTArcRootForUID),a) << " = <" << value << ">" << endl;
+							}
+							else {
+								log << EMsgDC(IllegalITUTArcRootForUID) << " - \"" << value << "\" in ";
+								writeTagNumberAndNameToLog(a,list.getDictionary(),log);
+								log << endl;
+							}
+							success = false;
+						}
+						// (000651)
+						// ISO 9834-1 ITU T Rec X.660 Annex A.3.3.1 "The arcs below ... 0 ... have the primary integer values of 1 to 26"
+						// especially detects bad dummy value like "0.0.0.0"
+						else if (strncmp(value,"0.0.",4) == 0
+							  && strncmp(value,"0.0.1.",6) != 0
+							  && strncmp(value,"0.0.2.",6) != 0
+						  ) {
+							if (newformat) {
+								log << EMsgDCF(MMsgDC(IllegalITUTArcRootForUID),a) << " = <" << value << ">" << endl;
+							}
+							else {
+								log << EMsgDC(IllegalITUTArcRootForUID) << " - \"" << value << "\" in ";
+								writeTagNumberAndNameToLog(a,list.getDictionary(),log);
+								log << endl;
+							}
+							success = false;
+						}
+						// (000651)
+						// ISO 9834-1 ITU T Rec X.660 Annex A.3.4 "... have never been used and are of historical interest only"
+						// especially detects bad dummy value like "0.1.2.3"
+						else if (strncmp(value,"0.1.",4) == 0) {
+							if (newformat) {
+								log << EMsgDCF(MMsgDC(IllegalITUTArcRootForUID),a) << " = <" << value << ">" << endl;
+							}
+							else {
+								log << EMsgDC(IllegalITUTArcRootForUID) << " - \"" << value << "\" in ";
+								writeTagNumberAndNameToLog(a,list.getDictionary(),log);
+								log << endl;
+							}
+							success = false;
+						}
+						// (000651)
+						// ISO 9834-1 ITU T Rec X.660 Annex A.4.2 "Four arcs are specified from the node with the primary integer value 1"
+						// makes unnecessary to check for ISO 9834-1 ITU T Rec X.660 Section 7.2.6 "the arcs beneath the root arcs 0 and 1 are restricted to forty arcs with primary integer values 0 to 39"
+						else if (strncmp(value,"1.",2) == 0
+							  && strncmp(value,"1.0.",4) != 0
+							  && strncmp(value,"1.1.",4) != 0
+							  && strncmp(value,"1.2.",4) != 0
+							  && strncmp(value,"1.3.",4) != 0
+						  ) {
+							if (newformat) {
+								log << EMsgDCF(MMsgDC(IllegalISOArcRootForUID),a) << " = <" << value << ">" << endl;
+							}
+							else {
+								log << EMsgDC(IllegalISOArcRootForUID) << " - \"" << value << "\" in ";
+								writeTagNumberAndNameToLog(a,list.getDictionary(),log);
+								log << endl;
+							}
+							success = false;
+						}
+						// (000651)
+						// ISO 9834-1 ITU T Rec X.660 Annex A.5.5 "joint registration within a country"
+						// ISO/IEC 9834-8 ITU-T Rec. X.667 2.25 for UUIDs
+						else if (strncmp(value,"2.",2) == 0
+							  && strncmp(value,"2.16.",5) != 0
+							  && strncmp(value,"2.25.",5) != 0
+						  ) {
+							if (newformat) {
+								log << EMsgDCF(MMsgDC(IllegalJointArcRootForUID),a) << " = <" << value << ">" << endl;
+							}
+							else {
+								log << EMsgDC(IllegalJointArcRootForUID) << " - \"" << value << "\" in ";
+								writeTagNumberAndNameToLog(a,list.getDictionary(),log);
+								log << endl;
+							}
+							success = false;
+						}
+						/// will probably have been caught above but leave just in case ...
 						else if (strlen(value) >= 5 && strncmp(value,"2.999",5) == 0) {
 							if (newformat) {
 								log << EMsgDCF(MMsgDC(ExampleRootForUID),a) << " = <" << value << ">" << endl;
@@ -584,24 +673,24 @@ checkUIDs(AttributeList &list,bool verbose,bool newformat,bool allpffgitems,Text
 								 (
 								 	// Well-known SOP Instance UIDs
 								     strcmp(value,"1.2.840.10008.1.5.1") != 0	// Hot Iron Color Palette SOP Instance
-								  || strcmp(value,"1.2.840.10008.1.5.2") != 0
-								  || strcmp(value,"1.2.840.10008.1.5.3") != 0
-								  || strcmp(value,"1.2.840.10008.1.5.4") != 0
-								  || strcmp(value,"1.2.840.10008.1.5.5") != 0
-								  || strcmp(value,"1.2.840.10008.1.5.6") != 0
-								  || strcmp(value,"1.2.840.10008.1.5.7") != 0
-								  || strcmp(value,"1.2.840.10008.1.5.8") != 0
-								  || strcmp(value,"1.2.840.10008.1.20.1.1") != 0
-								  || strcmp(value,"1.2.840.10008.1.20.2.1") != 0
-								  || strcmp(value,"1.2.840.10008.1.40.1") != 0
-								  || strcmp(value,"1.2.840.10008.1.42.1") != 0
-								  || strcmp(value,"1.2.840.10008.5.1.1.17") != 0
-								  || strcmp(value,"1.2.840.10008.5.1.1.17.376") != 0
-								  || strcmp(value,"1.2.840.10008.5.1.1.25") != 0
-								  || strcmp(value,"1.2.840.10008.5.1.1.40.1") != 0
-								  || strcmp(value,"1.2.840.10008.5.1.4.1.1.201.1.1") != 0
-								  || strcmp(value,"1.2.840.10008.5.1.4.34.5") != 0
-								  || strcmp(value,"1.2.840.10008.5.1.4.34.5.1") != 0
+								  && strcmp(value,"1.2.840.10008.1.5.2") != 0
+								  && strcmp(value,"1.2.840.10008.1.5.3") != 0
+								  && strcmp(value,"1.2.840.10008.1.5.4") != 0
+								  && strcmp(value,"1.2.840.10008.1.5.5") != 0
+								  && strcmp(value,"1.2.840.10008.1.5.6") != 0
+								  && strcmp(value,"1.2.840.10008.1.5.7") != 0
+								  && strcmp(value,"1.2.840.10008.1.5.8") != 0
+								  && strcmp(value,"1.2.840.10008.1.20.1.1") != 0
+								  && strcmp(value,"1.2.840.10008.1.20.2.1") != 0
+								  && strcmp(value,"1.2.840.10008.1.40.1") != 0
+								  && strcmp(value,"1.2.840.10008.1.42.1") != 0
+								  && strcmp(value,"1.2.840.10008.5.1.1.17") != 0
+								  && strcmp(value,"1.2.840.10008.5.1.1.17.376") != 0
+								  && strcmp(value,"1.2.840.10008.5.1.1.25") != 0
+								  && strcmp(value,"1.2.840.10008.5.1.1.40.1") != 0
+								  && strcmp(value,"1.2.840.10008.5.1.4.1.1.201.1.1") != 0
+								  && strcmp(value,"1.2.840.10008.5.1.4.34.5") != 0
+								  && strcmp(value,"1.2.840.10008.5.1.4.34.5.1") != 0
 								 )
 								) {
 									if (newformat) {
@@ -1867,9 +1956,12 @@ checkCodeValuesDoNotContainInappropriateCharacters(AttributeList &list,bool verb
 							Uint16 nValues= aCodeValue->getVM();
 							if (nValues > 0 && vCodingSchemeDesignator) {
 								//cerr << "checkCodeValuesDoNotContainInappropriateCharacters(): have CodeValue with " << nValues << " values" << endl;
-								bool isSNOMED = strcmp(vCodingSchemeDesignator,"SRT") == 0|| strcmp(vCodingSchemeDesignator,"SNM3") == 0 || strcmp(vCodingSchemeDesignator,"99SDM") == 0;
+								bool isSRT = strcmp(vCodingSchemeDesignator,"SRT") == 0|| strcmp(vCodingSchemeDesignator,"SNM3") == 0 || strcmp(vCodingSchemeDesignator,"99SDM") == 0;
+								//cerr << "checkCodeValuesDoNotContainInappropriateCharacters(): isSRT " << isSRT << endl;
+								bool isSCT = strcmp(vCodingSchemeDesignator,"SCT") == 0;	// (000645)
+								//cerr << "checkCodeValuesDoNotContainInappropriateCharacters(): isSCT " << isSCT << endl;
 								bool isDICOM  = strcmp(vCodingSchemeDesignator,"DCM") == 0;
-								if (isSNOMED | isDICOM) {
+								if (isSRT | isSCT | isDICOM) {
 									int j;
 									for (j=0; j<nValues; ++j) {
 										char *value;
@@ -1879,8 +1971,13 @@ checkCodeValuesDoNotContainInappropriateCharacters(AttributeList &list,bool verb
 											char c;
 											while ((c=*ptr++)) {
 												bool bad = false;
-												if (isSNOMED) {
+												if (isSRT) {
 													if (!isupper(c) && !isdigit(c) && c != '-') {
+														bad = true;
+													}
+												}
+												else if (isSCT) {	// (000645)
+													if (!isdigit(c)) {
 														bad = true;
 													}
 												}
@@ -3425,30 +3522,68 @@ checkConsistencyOfTiledImageGeometry(AttributeList &list,bool verbose,bool newfo
 		}
 		
 		bool isMultiInstanceConcatenation = list[TagFromName(ConcatenationUID)] != NULL && vInConcatenationTotalNumber != 1;
-		
+
+		//cerr << "vNumberOfOpticalPaths = " << vNumberOfOpticalPaths << endl;
+		//cerr << "vTotalPixelMatrixFocalPlanes = " << vTotalPixelMatrixFocalPlanes << endl;
+		//cerr << "numberOfRowsOfTiles = " << numberOfRowsOfTiles << endl;
+		//cerr << "numberOfColumnsOfTiles = " << numberOfColumnsOfTiles << endl;
+		//cerr << "isTiledFull = " << isTiledFull << endl;
+		//cerr << "nPerFrameFunctionalGroupsSequenceItems = " << nPerFrameFunctionalGroupsSequenceItems << endl;
+		//cerr << "vNumberOfFrames = " << vNumberOfFrames << endl;
+		//cerr << "expectedNumberOfFrames = " << expectedNumberOfFrames << endl;
+		//cerr << "isMultiInstanceConcatenation = " << isMultiInstanceConcatenation << endl;
+
 		if (isTiledFull || nPerFrameFunctionalGroupsSequenceItems == vNumberOfFrames) {
-			if (!isMultiInstanceConcatenation && expectedNumberOfFrames != vNumberOfFrames) {	// (000608)
-				if (newformat) {
-					log << EMsgDCF(MMsgDC(NumberOfFramesDoesNotMatchExpectedValueForTiledTotalPixelMatrix),aNumberOfFrames)
-						<< " = <" << vNumberOfFrames
-						<< " > - expected " << expectedNumberOfFrames
-						<< " for " << vNumberOfOpticalPaths << " optical paths"
-						<< ", " << vTotalPixelMatrixFocalPlanes << " focal planes"
-						<< ", " << numberOfRowsOfTiles << " rows of tiles"
-						<< ", " << numberOfColumnsOfTiles << " columns of tiles"
-						<< endl;
+			if (expectedNumberOfFrames != vNumberOfFrames) {
+				if (isMultiInstanceConcatenation) {	// (000608)
+					if (isTiledFull) {	 			// (000642)
+						if (newformat) {
+							log << EMsgDCF(MMsgDC(NumberOfFramesDoesNotMatchExpectedValueForTiledTotalPixelMatrixForTILED_FULLWithConcatenation),aNumberOfFrames)
+								<< " = <" << vNumberOfFrames
+								<< " > - expected " << expectedNumberOfFrames
+								<< " for " << vNumberOfOpticalPaths << " optical paths"
+								<< ", " << vTotalPixelMatrixFocalPlanes << " focal planes"
+								<< ", " << numberOfRowsOfTiles << " rows of tiles"
+								<< ", " << numberOfColumnsOfTiles << " columns of tiles"
+								<< endl;
+						}
+						else {
+							log << EMsgDC(NumberOfFramesDoesNotMatchExpectedValueForTiledTotalPixelMatrixForTILED_FULLWithConcatenation)
+								<< " got " << vNumberOfFrames
+								<< " expected " << expectedNumberOfFrames
+								<< " for " << vNumberOfOpticalPaths << " optical paths"
+								<< ", " << vTotalPixelMatrixFocalPlanes << " focal planes"
+								<< ", " << numberOfRowsOfTiles << " rows of tiles"
+								<< ", " << numberOfColumnsOfTiles << " columns of tiles"
+								<< endl;
+						}
+					}
+					// else OK to have not TILED_FULL concatenation - cannot check total number of frames in concatenation since requires access to other instances
+					// until CP 2540 Total Number of Frames in Concatenation (optional) is added (000643)
 				}
 				else {
-					log << EMsgDC(NumberOfFramesDoesNotMatchExpectedValueForTiledTotalPixelMatrix)
-						<< " got " << vNumberOfFrames
-						<< " expected " << expectedNumberOfFrames
-						<< " for " << vNumberOfOpticalPaths << " optical paths"
-						<< ", " << vTotalPixelMatrixFocalPlanes << " focal planes"
-						<< ", " << numberOfRowsOfTiles << " rows of tiles"
-						<< ", " << numberOfColumnsOfTiles << " columns of tiles"
-						<< endl;
+					if (newformat) {
+						log << EMsgDCF(MMsgDC(NumberOfFramesDoesNotMatchExpectedValueForTiledTotalPixelMatrix),aNumberOfFrames)
+							<< " = <" << vNumberOfFrames
+							<< " > - expected " << expectedNumberOfFrames
+							<< " for " << vNumberOfOpticalPaths << " optical paths"
+							<< ", " << vTotalPixelMatrixFocalPlanes << " focal planes"
+							<< ", " << numberOfRowsOfTiles << " rows of tiles"
+							<< ", " << numberOfColumnsOfTiles << " columns of tiles"
+							<< endl;
+					}
+					else {
+						log << EMsgDC(NumberOfFramesDoesNotMatchExpectedValueForTiledTotalPixelMatrix)
+							<< " got " << vNumberOfFrames
+							<< " expected " << expectedNumberOfFrames
+							<< " for " << vNumberOfOpticalPaths << " optical paths"
+							<< ", " << vTotalPixelMatrixFocalPlanes << " focal planes"
+							<< ", " << numberOfRowsOfTiles << " rows of tiles"
+							<< ", " << numberOfColumnsOfTiles << " columns of tiles"
+							<< endl;
+					}
+					success=false;
 				}
-				success=false;
 			}
 		}
 		// (000626)
@@ -4035,6 +4170,463 @@ checkConsistencyOfWholeSlideMicroscopyAttributes(AttributeList &list,bool verbos
 	return success;
 }
 
+// (000646)
+// the following JPEG-family related methods are copied or derived from jpegdump.cc - should refactor :(
+
+Uint16 isFixedLengthJPEGSegment(Uint16 marker)
+{
+	Uint16 length;
+	switch (marker) {
+		case 0xffdf:	// JPEG_MARKER_EXP
+			length=3; break;
+		default:
+			length=0; break;
+	}
+	return length;
+}
+bool isNoLengthJPEGSegment(Uint16 marker)
+{
+	bool nolength;
+	switch (marker) {
+	case 0xffd8:	// JPEG_MARKER_SOI
+	case 0xffd9:	// JPEG_MARKER_EOI
+	case 0xff01:	// JPEG_MARKER_TEM
+	//case JPEG_MARKER_RST0:
+	//case JPEG_MARKER_RST1:
+	//case JPEG_MARKER_RST2:
+	//case JPEG_MARKER_RST3:
+	//case JPEG_MARKER_RST4:
+	//case JPEG_MARKER_RST5:
+	//case JPEG_MARKER_RST6:
+	//case JPEG_MARKER_RST7:
+	//case JPEG_MARKER_FF30:
+	//case JPEG_MARKER_FF31:
+	//case JPEG_MARKER_FF32:
+	//case JPEG_MARKER_FF33:
+	//case JPEG_MARKER_FF34:
+	//case JPEG_MARKER_FF35:
+	//case JPEG_MARKER_FF36:
+	//case JPEG_MARKER_FF37:
+	//case JPEG_MARKER_FF38:
+	//case JPEG_MARKER_FF39:
+	//case JPEG_MARKER_FF3A:
+	//case JPEG_MARKER_FF3B:
+	//case JPEG_MARKER_FF3C:
+	//case JPEG_MARKER_FF3D:
+	//case JPEG_MARKER_FF3E:
+	//case JPEG_MARKER_FF3F:
+	case 0xff4f:	// JPEG_MARKER_SOC
+	case 0xff93:	// JPEG_MARKER_SOD
+	//case JPEG_MARKER_EOC:         // same as JPEG EOI
+	case 0xff92:	// JPEG_MARKER_EPH
+				nolength=true; break;
+	default:
+				nolength=false; break;
+	}
+	return nolength;
+}
+
+bool isVariableLengthJPEGSegment(Uint16 marker)
+{
+	return !isNoLengthJPEGSegment(marker) && !isFixedLengthJPEGSegment(marker);
+}
+
+
+// ISO/IEC 15444-1:2002 Table A.16 Progression order for the SGcod, SPcoc, and Ppoc parameters
+const char *getDescriptionOfProgressionOrder(unsigned char progressionOrder) {
+	const char *descriptionOfProgressionOrder = "Reserved";
+	switch (progressionOrder) {
+		case 0x00:
+			descriptionOfProgressionOrder = "Layer-resolution level-component-position";
+			break;
+		case 0x01:
+			descriptionOfProgressionOrder = "Resolution level-layer-component-position";
+			break;
+		case 0x02:
+			descriptionOfProgressionOrder = "Resolution level-position-component-layer";
+			break;
+		case 0x03:
+			descriptionOfProgressionOrder = "Position-component-resolution level-layer";
+			break;
+		case 0x04:
+			descriptionOfProgressionOrder = "Component-position-resolution level-layer";
+			break;
+	}
+	return descriptionOfProgressionOrder;
+}
+
+// ISO/IEC 15444-1:2002 Table A.17 Multiple component transformation for the SGcod parameters
+const char *getDescriptionOfMultipleComponentTransformation(unsigned char multipleComponentTransformation) {
+	const char *descriptionOfMultipleComponentTransformation = "Reserved";
+	switch (multipleComponentTransformation) {
+		case 0x00:
+			descriptionOfMultipleComponentTransformation = "None";
+			break;
+		case 0x01:
+			descriptionOfMultipleComponentTransformation = "Part 1 Annex G2 transformation of components 0,1,2";
+			break;
+	}
+	return descriptionOfMultipleComponentTransformation;
+}
+
+// ISO/IEC 15444-1:2002 Table A.20 - Transformation for the SPcod and SPcoc parameters
+const char *getDescriptionOfWaveletTransformation(unsigned char waveletTransformation) {
+	const char *descriptionOfWaveletTransformation = "Reserved";
+	switch (waveletTransformation) {
+		case 0x00:
+			descriptionOfWaveletTransformation = "9-7 irreversible filter";
+			break;
+		case 0x01:
+			descriptionOfWaveletTransformation = "5-3 reversible filter";
+			break;
+	}
+	return descriptionOfWaveletTransformation;
+}
+
+class JPEG_COD_Parameters {
+	unsigned char Scod;
+	bool VariablePrecinctSize;
+	bool SOPMarkerSegments;
+	bool EPHPMarkerSegments;
+	
+	unsigned char ProgressionOrder;
+	const char *descriptionOfProgressionOrder;
+	
+	unsigned NumberOfLayers;
+
+	unsigned char MultipleComponentTransformation;
+	const char *descriptionOfMultipleComponentTransformation;
+	
+	unsigned NumberOfDecompositionLevels;
+
+	unsigned char CodeBlockWidth;
+	unsigned char CodeBlockHeight;
+	
+	unsigned char CodeBlockStyle;
+	bool SelectiveArithmeticCodingBypass;
+	bool ResetContextProbabilitiesOnCodingPassBoundaries;
+	bool TerminationOnEachCodingPass;
+	bool VerticallyCausalContext;
+	bool PredictableTermination;
+	bool SegmentationSymbolsAreUsed;
+	
+	unsigned char WaveletTransformation;
+	const char *descriptionOfWaveletTransformation;
+
+public:
+	JPEG_COD_Parameters(const unsigned char *buffer,size_t length)
+		{
+			Scod = buffer[0];
+			VariablePrecinctSize = (Scod & 0x01) != 0;
+			SOPMarkerSegments    = (Scod & 0x02) != 0;
+			EPHPMarkerSegments   = (Scod & 0x04) != 0;
+
+			ProgressionOrder = buffer[1];
+			descriptionOfProgressionOrder = getDescriptionOfProgressionOrder(ProgressionOrder);
+			
+			NumberOfLayers  = (buffer[2]<<8)+buffer[3];
+
+			MultipleComponentTransformation = buffer[4];
+			descriptionOfMultipleComponentTransformation = getDescriptionOfMultipleComponentTransformation(MultipleComponentTransformation);
+			
+			NumberOfDecompositionLevels = buffer[5];
+			CodeBlockWidth              = buffer[6];
+			CodeBlockHeight             = buffer[7];
+			
+			CodeBlockStyle				= buffer[8];
+			// Table A.19 - Code-block style for the SPcod and SPcoc parameters 
+			SelectiveArithmeticCodingBypass                 = (Scod & 0x01) != 0;
+			ResetContextProbabilitiesOnCodingPassBoundaries = (Scod & 0x02) != 0;
+			TerminationOnEachCodingPass                     = (Scod & 0x04) != 0;
+			VerticallyCausalContext                         = (Scod & 0x08) != 0;
+			PredictableTermination                          = (Scod & 0x10) != 0;
+			SegmentationSymbolsAreUsed                      = (Scod & 0x20) != 0;
+
+			WaveletTransformation = buffer[9];
+			descriptionOfWaveletTransformation = getDescriptionOfWaveletTransformation(WaveletTransformation);
+			
+			// if (VariablePrecinctSize) { ... } should extract precint size table
+
+			//dump(cerr);
+		}
+
+	~JPEG_COD_Parameters()
+		{
+		}
+
+	unsigned char getMultipleComponentTransformation() {
+		return MultipleComponentTransformation;
+	}
+
+	unsigned char getWaveletTransformation() {
+		return WaveletTransformation;
+	}
+
+	void dump(ostream &out) const
+		{
+			out << endl << "\tJPEG_COD_Parameters:" << endl;
+			out << "\t\t Scod = "; writeZeroPaddedHexNumber(out,Scod,1); out << endl;
+
+			out << "\t\t\t Precinct size "          << (VariablePrecinctSize ? "defined for each resolution level" : "PPx = 15 and PPy = 15") << endl;
+			out << "\t\t\t SOPMarkerSegments = "	<< (SOPMarkerSegments    ? "may be"   : "not") << " used" << endl;
+			out << "\t\t\t EPHPMarkerSegments = "	<< (EPHPMarkerSegments   ? "shall be" : "not") << " used" << endl;
+
+			out << "\t\t ProgressionOrder = "; writeZeroPaddedHexNumber(out,ProgressionOrder,1); out << " (" << descriptionOfProgressionOrder << " progression)" << endl;
+			out << "\t\t NumberOfLayers = "			<< NumberOfLayers << endl;
+
+			out << "\t\t MultipleComponentTransformation = "; writeZeroPaddedHexNumber(out,MultipleComponentTransformation,1); out << " (" << descriptionOfMultipleComponentTransformation << ")" << endl;
+
+			out << "\t\t NumberOfDecompositionLevels = "			<< NumberOfDecompositionLevels << endl;
+
+			out << "\t\t CodeBlockWidth = ";  writeZeroPaddedHexNumber(out,CodeBlockWidth,1);  out << endl;
+			out << "\t\t CodeBlockHeight = "; writeZeroPaddedHexNumber(out,CodeBlockHeight,1); out << endl;
+
+			out << "\t\t CodeBlockStyle = "; writeZeroPaddedHexNumber(out,CodeBlockStyle,1); out << endl;
+			out << "\t\t\t " << (SelectiveArithmeticCodingBypass                  ? "Selective"    : "No selective")    << " arithmetic coding bypass" << endl;
+			out << "\t\t\t " << (ResetContextProbabilitiesOnCodingPassBoundaries  ? "Reset"        : "No reset of")     << " context probabilities on coding pass boundaries" << endl;
+			out << "\t\t\t " << (TerminationOnEachCodingPass                      ? "Termination"  : "No termination")  << " on each coding pass" << endl;
+			out << "\t\t\t " << (VerticallyCausalContext                          ? "Vertically"   : "No vertically")   << " causal context" << endl;
+			out << "\t\t\t " << (PredictableTermination                           ? "Predictable"  : "No predictable")  << " termination" << endl;
+			out << "\t\t\t " << (SegmentationSymbolsAreUsed                       ? "Segmentation" : "No segmentation") << " symbols are used" << endl;
+
+			out << "\t\t WaveletTransformation = "; writeZeroPaddedHexNumber(out,WaveletTransformation,1); out << " (" << descriptionOfWaveletTransformation << ")" << endl;
+			
+			// if (VariablePrecinctSize) { ... } should dump precint size table
+		}
+};
+
+// (000646)
+
+static bool
+checkConsistencyOfTransferSyntaxPhotometricInterpretationAndCompressedBitstream(AttributeList &list,istream& input_opener,bool verbose,bool newformat,TextOutputStream &log) {
+//cerr << "checkConsistencyOfTransferSyntaxPhotometricInterpretationAndCompressedBitstream():" << endl;
+	bool success=true;
+
+	char *vPhotometricInterpretation = AttributeValue(list[TagFromName(PhotometricInterpretation)],"");
+	Uint16 vSamplesPerPixel = AttributeValue(list[TagFromName(SamplesPerPixel)]);
+	char *vTransferSyntaxUID = AttributeValue(list[TagFromName(TransferSyntaxUID)],"");
+	if (strlen(vTransferSyntaxUID) > 0) {
+		TransferSyntax ts = TransferSyntax(vTransferSyntaxUID);
+		if (ts.isISO15444JPEG2000Family()) {
+			if (vSamplesPerPixel == 3) {
+				bool isYBR_ICT = strcmp(vPhotometricInterpretation,"YBR_ICT") == 0;
+				bool isYBR_RCT = strcmp(vPhotometricInterpretation,"YBR_RCT") == 0;
+				bool isRGB = strcmp(vPhotometricInterpretation,"RGB") == 0;
+				bool isYBR_FULL_422 = strcmp(vPhotometricInterpretation,"YBR_FULL_422") == 0;
+				// JPEG_COD_Parameters
+                // MultipleComponentTransformation = 0x1 (Part 1 Annex G2 transformation of components 0,1,2)
+				// WaveletTransformation = 0x0 (9-7 irreversible filter)
+				Attribute *aPixelData=list[TagFromName(PixelData)];
+				if (aPixelData) {
+					BinaryInputStream in(input_opener,LittleEndian);	// NB. Need to use DICOM endianness to read Items properly, but remember that JPEG bistream is big endian
+					long offset = aPixelData->getByteOffset();
+					//cerr << "checkConsistencyOfTransferSyntaxPhotometricInterpretationAndCompressedBitstream(): aPixelData offsetToStartOfPixelDataAttribute = " << offset << endl;
+					// can assume Explicit VR LE representation since all encapsulated TS are that
+					
+					offset += 12;	// length of PixelData group, element, VR and padding, VL
+					offset += 4;	// length of Item Tag group, element
+						
+					in.seekg(offset);	// need to seek from beginning, since may not have been rewound from previous reads
+
+					// now at start of BOT Item whether empty or not
+
+					Uint32 lengthOfBasicOffsetTableInBytes = in.read32();
+					//cerr << "checkConsistencyOfTransferSyntaxPhotometricInterpretationAndCompressedBitstream(): lengthOfBasicOffsetTableInBytes = " << lengthOfBasicOffsetTableInBytes << endl;
+					offset+=4;
+
+					offset+=lengthOfBasicOffsetTableInBytes;
+
+					in.seekg(offset);
+					Uint16 group = in.read16();
+					Uint16 element = in.read16();
+					offset+=4;
+					Tag tag = Tag(group,element);
+//cerr << "checkConsistencyOfTransferSyntaxPhotometricInterpretationAndCompressedBitstream(): potential Item Tag = ";
+//tag.write(log);
+//cerr << endl;
+					if (tag != TagFromName(Item)) {
+						if (newformat) {
+							log << EMsgDCF(MMsgDC(StartOfFirstFragmentContainingEncapsulatedCompressedBitstreamIsNotAnItemTag),aPixelData)
+								<< endl;
+						}
+						else {
+							log << EMsgDC(StartOfFirstFragmentContainingEncapsulatedCompressedBitstreamIsNotAnItemTag)
+								<< endl;
+						}
+					}
+					else {
+						// good Item Tag, so now check its length
+						Uint32 itemLength = in.read32();
+						offset+=4;
+//cerr << "checkConsistencyOfTransferSyntaxPhotometricInterpretationAndCompressedBitstream(): frame 0 itemLength = " << itemLength << endl;
+						if (itemLength  > 2) {
+							BinaryInputStream jin(input_opener,BigEndian);	// need new input stream with different endianness
+							jin.seekg(offset);
+							// see if Frame starts with J2K SOC Start of codestream
+							{
+								unsigned m1 = jin.read8() & 0xff;
+								unsigned m2 = jin.read8() & 0xff;
+//cerr << "checkOffsetTables(): frame " << i << " marker = " << hex << m1 << "," << m2 << dec << endl;
+								if (m1 != 0xff || m2 != 0x4f) {
+									if (newformat) {
+										log << WMsgDCF(MMsgDC(EncapsulatedPixelDataFragmentDoesNotStartWithSOCMarker),aPixelData)
+											<< endl;
+									}
+									else {
+										log << WMsgDC(EncapsulatedPixelDataFragmentDoesNotStartWithSOCMarker)
+											<< endl;
+									}
+								}
+								else {
+									// we have SOC marker segment
+									// work through whatever fixed or variable length marker segements we encounter until we have COD
+									int remainingLength = itemLength - 2;	// the two bytes of the SOC
+									bool done = false;
+									Uint16 markerprefix=jin.read8();
+									--remainingLength;
+									while (remainingLength > 0 && !done && in) {
+										// derived from jpegdump.cc main loop, except don't need to worry about entropy coded segement since won't get that far
+										if (markerprefix != 0xff) {
+											if (newformat) {
+												log << WMsgDCF(MMsgDC(MalformedCompressedBitstream),aPixelData)
+													<< endl;
+											}
+											else {
+												log << WMsgDC(MalformedCompressedBitstream)
+													<< endl;
+											}
+											done = true;
+										}
+										Uint16 marker=jin.read8();
+										--remainingLength;
+										marker|=0xff00;			// convention is to express them with the leading ff
+//cerr << "Marker ";
+//writeZeroPaddedHexNumber(cerr,marker,2);
+//cerr << endl;
+										if (isVariableLengthJPEGSegment(marker)) {
+											// expect JPEG_MARKER_SIZ = 0xff51;
+											// expect JPEG_MARKER_COD = 0xff52;
+											Uint16 length=jin.read16();
+											remainingLength-=2;
+											// NB. the length includes itself (but not the marker)
+//cerr << "length variable ";
+//writeZeroPaddedHexNumber(cerr,length,2);
+//cerr << endl;
+											unsigned char *buffer=new unsigned char[length-2];
+											int count = jin.read((char *)buffer,length-2).gcount();
+//cerr << "read " << count << endl;
+											if (count != length-2) {
+												// give up
+												done = true;
+											}
+											else {
+												remainingLength-=count;
+												if (marker == 0xff52) {	// JPEG_MARKER_COD
+//cerr << "Have COD" << endl;
+													JPEG_COD_Parameters *cod = new JPEG_COD_Parameters(buffer,length-2);
+//cod->dump(cerr);
+													Uint16     mct = cod->getMultipleComponentTransformation();
+													Uint16 wavelet = cod->getWaveletTransformation();
+													
+													if (isYBR_ICT || isYBR_RCT) {
+														// MultipleComponentTransformation = 0x1 (Part 1 Annex G2 transformation of components 0,1,2)
+														if (mct != 1) {
+															if (newformat) {
+																log << EMsgDCF(MMsgDC(JPEG2000CompressedBitstreamIsNotMultipleComponentTransformationButRequiredForPhotometricInterpretation),aPixelData)
+																	<< " - is " << mct << " (expected 1) for Photometric Interpretation " << vPhotometricInterpretation
+																	<< endl;
+															}
+															else {
+																log << EMsgDC(JPEG2000CompressedBitstreamIsNotMultipleComponentTransformationButRequiredForPhotometricInterpretation)
+																	<< " - is " << mct << " (expected 1) for Photometric Interpretation " << vPhotometricInterpretation
+																	<< endl;
+															}
+														}
+													}
+													else if (isYBR_FULL_422 || isRGB) {
+														if (mct != 0) {
+															if (newformat) {
+																log << EMsgDCF(MMsgDC(JPEG2000CompressedBitstreamIsMultipleComponentTransformationButNotCorrectForPhotometricInterpretation),aPixelData)
+																	<< " - is " << mct << " (expected 0) for Photometric Interpretation " << vPhotometricInterpretation
+																	<< endl;
+															}
+															else {
+																log << EMsgDC(JPEG2000CompressedBitstreamIsMultipleComponentTransformationButNotCorrectForPhotometricInterpretation)
+																	<< " - is " << mct << " (expected 0) for Photometric Interpretation " << vPhotometricInterpretation
+																	<< endl;
+															}
+														}
+													}
+													
+													if (isYBR_ICT) {
+														// 9-7 irreversible filter
+														if (wavelet != 0) {
+															if (newformat) {
+																log << EMsgDCF(MMsgDC(JPEG2000CompressedBitstreamDoesNotUseIrreversibleWaveletButRequiredForPhotometricInterpretation),aPixelData)
+																	<< " - is " << wavelet << " (expected 0) for Photometric Interpretation " << vPhotometricInterpretation
+																	<< endl;
+															}
+															else {
+																log << EMsgDC(JPEG2000CompressedBitstreamDoesNotUseIrreversibleWaveletButRequiredForPhotometricInterpretation)
+																	<< " - is " << wavelet << " (expected 0) for Photometric Interpretation " << vPhotometricInterpretation
+																	<< endl;
+															}
+														}
+													}
+													else if (isYBR_RCT) {
+														// 5-3 reversible filter
+														if (wavelet != 1) {
+															if (newformat) {
+																log << EMsgDCF(MMsgDC(JPEG2000CompressedBitstreamDoesNotUseReversibleWaveletButRequiredForPhotometricInterpretation),aPixelData)
+																	<< " - is " << wavelet << " (expected 1) for Photometric Interpretation " << vPhotometricInterpretation
+																	<< endl;
+															}
+															else {
+																log << EMsgDC(JPEG2000CompressedBitstreamDoesNotUseReversibleWaveletButRequiredForPhotometricInterpretation)
+																	<< " - is " << wavelet << " (expected 1) for Photometric Interpretation " << vPhotometricInterpretation
+																	<< endl;
+															}
+														}
+													}
+
+													done = true;	// have all we need so can stop
+												}
+												// else ignore it and loop having already read its full content
+											}
+											delete[] buffer;
+										}
+										else {
+											Uint16 length=isFixedLengthJPEGSegment(marker);
+cerr << "length fixed ";
+writeZeroPaddedHexNumber(cerr,length,2);
+cerr << endl;
+											if (length == 0) {
+												// do nothing - just loop and ignore it
+											}
+											else {
+												// don't care about the value so just read the bytes and discard them
+												unsigned char *buffer=new unsigned char[length-2];
+												int count = jin.read((char *)buffer,length-2).gcount();
+cerr << "read " << count << endl;
+												remainingLength-=count;
+												// don't bother checking for success :(
+												delete[] buffer;
+											}
+										}
+										markerprefix=jin.read8();
+									}
+								}
+							}
+						}
+						// else just don't do the check
+					}
+				}
+			}
+		}
+	}
+	return success;
+}
+
 int
 main(int argc, char *argv[])
 {
@@ -4184,6 +4776,8 @@ main(int argc, char *argv[])
 	if (!checkCodeSequenceItemsAreNotUnknown(list,verbose,newformat,allpffgitems,log)) success = false;	// (000589)
 	
 	if (!checkConsistencyOfWholeSlideMicroscopyAttributes(list,verbose,newformat,log)) success = false;	// (000577)
+	
+	if (!checkConsistencyOfTransferSyntaxPhotometricInterpretationAndCompressedBitstream(list,*(istream *)input_opener,verbose,newformat,log)) success = false;	// (000646)
 
 	if (!list.validatePrivate(verbose,newformat,allpffgitems,log)) success = false;
 	

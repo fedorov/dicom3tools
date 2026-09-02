@@ -241,17 +241,46 @@
 (0019,0041) VERS="ADAC" VR="IS"   VM="1-n"	Owner="ADAC_IMG"	Keyword="ADACHeaderImageSize"		Name="ADAC Header/Image Size"
 (0019,0061) VERS="ADAC" VR="OB"   VM="1"	Owner="ADAC_IMG"	Keyword="ADACPegasysHeaders"		Name="ADAC Pegasys Headers"
 
-(0009,0001) VERS="SEC"  VR="SH"   VM="1"	Owner="SECTRA_Ident_01"			Keyword="RequestNumber"		Name="Request number"
-(0009,0002) VERS="SEC"  VR="SH"   VM="1"	Owner="SECTRA_Ident_01"			Keyword="ExaminationNumber"	Name="Examination number"
-(0009,0004) VERS="SEC"  VR="LO"   VM="1"	Owner="SECTRA_Ident_01"			Keyword="SeriesIdentifier"	Name="Series Identifier"
-(0009,0005) VERS="SEC"  VR="LO"   VM="1"	Owner="SECTRA_Ident_01"			Keyword="SeriesOrder"		Name="Series Order"
-(0009,0006) VERS="SEC"  VR="LO"   VM="1"	Owner="SECTRA_Ident_01"			Keyword="FileName"			Name="File Name"
-(0009,0007) VERS="SEC"  VR="LO"   VM="1"	Owner="SECTRA_Ident_01"			Keyword="ImageDataID"		Name="Image Data ID"
-(0029,0001) VERS="SEC"  VR="OB"   VM="1"	Owner="SECTRA_ImageInfo_01"		Keyword="ImageInfo"			Name="Image info"
-(0029,0002) VERS="SEC"  VR="CS"   VM="1"	Owner="SECTRA_ImageInfo_01"		Keyword="Marking"			Name="Marking"
-(0029,0003) VERS="SEC"  VR="LO"   VM="1"	Owner="SECTRA_ImageInfo_01"		Keyword="NoDecompression"	Name="No decompression"
-(0029,0004) VERS="SEC"  VR="OB"   VM="1"	Owner="SECTRA_ImageInfo_01"		Keyword="ImageInfoNew"		Name="Image info new"
+(0009,0001) VERS="SEC"  VR="LO"   VM="1"	Owner="SECTRA_Ident_01"			Keyword="RequestID"					Name="Request ID"
+(0009,0002) VERS="SEC"  VR="LO"   VM="1"	Owner="SECTRA_Ident_01"			Keyword="ExaminationID"				Name="Examination ID"
+(0009,0004) VERS="SEC"  VR="LO"   VM="1"	Owner="SECTRA_Ident_01"			Keyword="SeriesID"					Name="Series ID"
+(0009,0005) VERS="SEC"  VR="LO"   VM="1"	Owner="SECTRA_Ident_01"			Keyword="SeriesOrder"				Name="Series Order"
+(0009,0006) VERS="SEC"  VR="LO"   VM="1"	Owner="SECTRA_Ident_01"			Keyword="FileName"					Name="File Name"
+(0009,0007) VERS="SEC"  VR="LO"   VM="1"	Owner="SECTRA_Ident_01"			Keyword="ImageDataID"				Name="Image Data ID"
+(0009,0008) VERS="SEC"  VR="LO"   VM="1"	Owner="SECTRA_Ident_01"			Keyword="ReferringUnit"				Name="Referring Unit"
+(0009,0009) VERS="SEC"  VR="LO"   VM="1"	Owner="SECTRA_Ident_01"			Keyword="LicenseCategory"			Name="License Category"
+(0009,000A) VERS="SEC"  VR="LT"   VM="1"	Owner="SECTRA_Ident_01"			Keyword="TeachingFileKeywords"		Name="Teaching File Keywords"
+(0009,000B) VERS="SEC"  VR="LT"   VM="1"	Owner="SECTRA_Ident_01"			Keyword="ExaminationComments"		Name="Examination Comments"
+(0009,000C) VERS="SEC"  VR="LO"   VM="1"	Owner="SECTRA_Ident_01"			Keyword="TeachingFileUserID"		Name="Teaching File User ID"
+
+(0021,0001) VERS="SEC"  VR="LO"   VM="1"	Owner="SECTRA_ImageRel_01"		Keyword="ImportOrder"				Name="Import Order"
+
+(0029,0001) VERS="SEC"  VR="OB"   VM="1"	Owner="SECTRA_ImageInfo_01"		Keyword="ImageInfo"					Name="Image Info"
+(0029,0002) VERS="SEC"  VR="CS"   VM="1"	Owner="SECTRA_ImageInfo_01"		Keyword="Marking"					Name="Marking"
+(0029,0003) VERS="SEC"  VR="LO"   VM="1"	Owner="SECTRA_ImageInfo_01"		Keyword="NoDecompression"			Name="No Decompression"
+(0029,0004) VERS="SEC"  VR="OB"   VM="1"	Owner="SECTRA_ImageInfo_01"		Keyword="ImageInfoNew"				Name="Image Info New"
+(0029,0005) VERS="SEC"	VR="US or SS"   VM="1"	Owner="SECTRA_ImageInfo_01"	Keyword="OriginalPixelPaddingValue"	Name="Original Pixel Padding Value"
+
+(0041,0001) VERS="SEC"  VR="OB"   VM="1"	Owner="SECTRA_EncapsulatedDicom_01"	Keyword="EncapsulatedDICOMFile"				Name="Encapsulated DICOM File"
+(0041,0002) VERS="SEC"  VR="UI"   VM="1"	Owner="SECTRA_EncapsulatedDicom_01"	Keyword="EncapsulatingDICOMSOPInstanceUID"	Name="Encapsulating DICOM SOP Instance UID"
+(0041,0003) VERS="SEC"  VR="US"   VM="1"	Owner="SECTRA_EncapsulatedDicom_01"	Keyword="EncapsulatingMaxPixelSize"			Name="Encapsulating Max Pixel Size"
+
+(0041,0001) VERS="SEC"  VR="LO"   VM="1"	Owner="SECTRA_ReportData_01"	Keyword="ReportIDString"			Name="Report ID String"
+(0041,0002) VERS="SEC"  VR="LO"   VM="1"	Owner="SECTRA_ReportData_01"	Keyword="ReportRISIDString"			Name="Report RIS ID String"
+(0041,0003) VERS="SEC"  VR="CS"   VM="1"	Owner="SECTRA_ReportData_01"	Keyword="ReportAuthorType"			Name="Report Author Type"
+(0041,0004) VERS="SEC"  VR="OB"   VM="1"	Owner="SECTRA_ReportData_01"	Keyword="ReportTextBlob"			Name="Report Text Blob"
+(0041,0005) VERS="SEC"  VR="LO"   VM="1"	Owner="SECTRA_ReportData_01"	Keyword="ReportContentType"			Name="Report Content Type"
+
+(0071,0001) VERS="SEC"  VR="SH"   VM="1"	Owner=" SECTRA_CoronaryAnalysisData_01"	Keyword="CoronaryAnalysisContentType"	Name="Coronary Analysis Content Type"
+(0071,0002) VERS="SEC"  VR="OB"   VM="1"	Owner=" SECTRA_CoronaryAnalysisData_01"	Keyword="CoronaryAnalysisDataContent"	Name="Coronary Analysis Data Content"
+
+(0089,0001) VERS="SEC"  VR="SQ"   VM="1"	Owner="SECTRA_IconImageSequence_01"	Keyword="PrivateIconImageSequence"		Name="Private Icon Image Sequence"
+
 (6001,0001) VERS="SEC"  VR="LO"   VM="1"	Owner="SECTRA_OverlayInfo_01"	Keyword="SectraOverlay"		Name="Sectra Overlay"
+
+(7FDF,0001) VERS="SEC"  VR="OB"   VM="1"	Owner="SECTRA_PixelData_01"		Keyword="ScannedDocumentImage"		Name="Scanned Document Image"
+(7FDF,0002) VERS="SEC"  VR="OB"   VM="1"	Owner="SECTRA_PixelData_01"		Keyword="PrivateIconImagePixelData"	Name="Private Icon Image Pixel Data"
+(7FDF,0003) VERS="SEC"  VR="OB"   VM="1"	Owner="SECTRA_PixelData_01"		Keyword="OriginalImagesPixelData"	Name="Original Images Pixel Data"
 
 (0009,0000) VERS="BIO"  VR="LO"   VM="1"	Owner="BioPri"			Keyword="?"		Name="?"
 (0009,0001) VERS="BIO"  VR="UN"   VM="1"	Owner="BioPri"			Keyword="?"		Name="?"
@@ -716,7 +745,15 @@
 (0015,0010) VERS=""     VR="LO"   VM="1"	Owner="INFINITT_FMX"			Keyword="?"		Name="?"
 (0015,0011) VERS=""     VR="LO"   VM="1"	Owner="INFINITT_FMX"			Keyword="?"		Name="?"
 
-(0009,0001) VERS=""     VR="LO"   VM="1"	Owner="BrainLAB_Conversion"			Keyword="ExportPlatformName"			Name="Export Platform Name" 
+(0029,0000) VERS=""     VR="LO"   VM="1"	Owner="INFINITT Healthcare"			Keyword="?"		Name="?"
+(0029,0010) VERS=""     VR="LO"   VM="1"	Owner="INFINITT Healthcare"			Keyword="?"		Name="?"
+(0029,0020) VERS=""     VR="LT"   VM="1"	Owner="INFINITT Healthcare"			Keyword="?"		Name="?"
+(0029,0030) VERS=""     VR="LT"   VM="1"	Owner="INFINITT Healthcare"			Keyword="?"		Name="?"
+(0029,0040) VERS=""     VR="SQ"   VM="1"	Owner="INFINITT Healthcare"			Keyword="?"		Name="?"
+(0029,0050) VERS=""     VR="LO"   VM="1"	Owner="INFINITT Healthcare"			Keyword="?"		Name="?"
+(0029,0060) VERS=""     VR="LO"   VM="1"	Owner="INFINITT Healthcare"			Keyword="?"		Name="?"
+
+(0009,0001) VERS=""     VR="LO"   VM="1"	Owner="BrainLAB_Conversion"			Keyword="ExportPlatformName"			Name="Export Platform Name"
 (0009,0002) VERS=""     VR="OB"   VM="1"	Owner="BrainLAB_Conversion"			Keyword="ExportPlatformData"			Name="Export Platform Data"
 
 (3273,0000) VERS=""     VR="DS"   VM="3"	Owner="BrainLAB_PatientSetup"		Keyword="IsocenterPosition"				Name="Isocenter Position" 
@@ -1687,10 +1724,14 @@
 (0099,0004) VERS="SYN"  VR="US"   VM="1-n"	Owner="SYNARC_1.0"	Keyword="?"	Name="?"
 (0099,0005) VERS="SYN"  VR="LO"   VM="1"	Owner="SYNARC_1.0"	Keyword="?"	Name="?"
 
-(0009,0001) VERS="PMP" VR="UT"   VM="1"		Owner="PixelMed Publishing"							Keyword="OriginalFileName"				Name="Original File Name"
-(0009,0002) VERS="PMP" VR="US"   VM="1"		Owner="PixelMed Publishing"							Keyword="OriginalTIFFIFDIndex"			Name="Original TIFF IFD Index"
-(0009,0003) VERS="PMP" VR="UC"   VM="1"		Owner="PixelMed Publishing"							Keyword="OriginalFileMACString"			Name="Original File MAC String"
-(0009,0004) VERS="PMP" VR="CS"   VM="1"		Owner="PixelMed Publishing"							Keyword="OriginalFileMACAlgorithm"		Name="Original File MAC Algorithm"
+(0009,0001) VERS="PMP" VR="UT"   VM="1"		Owner="PixelMed Publishing"							Keyword="OriginalFileName"						Name="Original File Name"
+(0009,0002) VERS="PMP" VR="US"   VM="1"		Owner="PixelMed Publishing"							Keyword="OriginalTIFFIFDIndex"					Name="Original TIFF IFD Index"
+(0009,0003) VERS="PMP" VR="UC"   VM="1"		Owner="PixelMed Publishing"							Keyword="OriginalFileMACString"					Name="Original File MAC String"
+(0009,0004) VERS="PMP" VR="CS"   VM="1"		Owner="PixelMed Publishing"							Keyword="OriginalFileMACAlgorithm"				Name="Original File MAC Algorithm"
+(0009,0005) VERS="PMP" VR="UL"   VM="1"		Owner="PixelMed Publishing"							Keyword="OriginalTIFFPhotometric"				Name="Original TIFF Photometric"
+(0009,0006) VERS="PMP" VR="UL"   VM="1"		Owner="PixelMed Publishing"							Keyword="OriginalTIFFCompression"				Name="Original TIFF Compression"
+(0009,0007) VERS="PMP" VR="SH"   VM="1"		Owner="PixelMed Publishing"							Keyword="OriginalTIFFCompressionColorSpace"		Name="Original TIFF Compression Color Space"
+(0009,0008) VERS="PMP" VR="SH"   VM="1"		Owner="PixelMed Publishing"							Keyword="OriginalTIFFCompressionQFactor"		Name="Original TIFF Compression Q Factor"
 
 (0011,0002) VERS="PMP" VR="UC"   VM="1"		Owner="PixelMed Publishing"							Keyword="StrainDescription"					Name="Strain Description"
 (0011,0003) VERS="PMP" VR="LO"   VM="1"		Owner="PixelMed Publishing"							Keyword="StrainNomenclature"				Name="Strain Nomenclature"
@@ -2715,6 +2756,8 @@
 (0925,0019) VERS="APE" VR="LO"   VM="1"		Owner="APERIO"		Keyword="ImageID"						Name="Image ID"
 (0925,0020) VERS="APE" VR="ST"   VM="1"		Owner="APERIO"		Keyword="Filename"						Name="Filename"
 (0925,0021) VERS="APE" VR="ST"   VM="1"		Owner="APERIO"		Keyword="CalibrationPointSource"		Name="Calibration Point Source"
+(0925,0022) VERS="APE" VR="LO"   VM="1"		Owner="APERIO"		Keyword="?"								Name="?"
+(0925,0023) VERS="APE" VR="LO"   VM="1"		Owner="APERIO"		Keyword="?"								Name="?"
 
 (0061,0002) VERS="UIH" VR="US"   VM="1"		Owner="DB Dicom Private Creator"		Keyword="GeneratePrivate"			Name="Generate Private"
 (0061,0002) VERS="UIH" VR="SH"   VM="1"		Owner="Common Private Header"			Keyword="FOV"			Name="FOV"
@@ -2775,6 +2818,19 @@
 (0063,0016) VERS="PRA" VR="OB"   VM="1"		Owner="Pramana Private Tags"			Keyword="intermediate_macro_image"		Name="Intermediate Macro Image"
 
 (0077,0001) VERS="AGFA" VR="LO"   VM="1"		Owner="agfa/FixupStudyInstanceUid"			Keyword="?"					Name="?"
+
+(7FD9,0079) VERS="AGFA" VR="CS"   VM="1"		Owner="agfa/xeroViewer"			Keyword="?"					Name="?"
+(7FD9,007a) VERS="AGFA" VR="CS"   VM="1"		Owner="agfa/xeroViewer"			Keyword="?"					Name="?"
+(7FD9,007c) VERS="AGFA" VR="CS"   VM="1"		Owner="agfa/xeroViewer"			Keyword="?"					Name="?"
+(7FD9,0081) VERS="AGFA" VR="ST"   VM="1"		Owner="agfa/xeroViewer"			Keyword="?"					Name="?"
+(7FD9,0082) VERS="AGFA" VR="ST"   VM="1"		Owner="agfa/xeroViewer"			Keyword="?"					Name="?"
+(7FD9,0083) VERS="AGFA" VR="ST"   VM="1"		Owner="agfa/xeroViewer"			Keyword="?"					Name="?"
+(7FD9,0085) VERS="AGFA" VR="ST"   VM="1"		Owner="agfa/xeroViewer"			Keyword="?"					Name="?"
+(7FD9,0087) VERS="AGFA" VR="IS"   VM="1"		Owner="agfa/xeroViewer"			Keyword="?"					Name="?"
+
+(7FD9,0060) VERS="AGFA" VR="LO"   VM="1"		Owner="agfa/studyUpdate"			Keyword="?"					Name="?"
+
+(7FDD,0099) VERS="AGFA" VR="LO"   VM="1"		Owner="agfa/xeroverse"			Keyword="?"					Name="?"
 
 (3021,0001) VERS="GOO" VR="LT"   VM="1"		Owner="GOOGLE"			Keyword="?"					Name="?"
 (3021,0003) VERS="GOO" VR="LT"   VM="1"		Owner="GOOGLE"			Keyword="?"					Name="?"
