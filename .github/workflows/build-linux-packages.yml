@@ -8,6 +8,8 @@ on:
 jobs:
   build-linux:
     runs-on: ubuntu-22.04
+    permissions:
+      contents: write
     
     steps:
       - name: Checkout repository
@@ -25,10 +27,15 @@ jobs:
         run: imake -I./config -DInstallInTopDir
 
       - name: Build
-        run: make World
+        # The awk scripts that generate the dconvert headers write their
+        # diagnostics to /dev/tty, which is fatal to gawk when there is no
+        # controlling terminal, and silently costs us the himr and ge9800
+        # converters. script(1) supplies a pseudo terminal; -e passes the exit
+        # status of the command through.
+        run: script -qec "make World" /dev/null
 
       - name: Install
-        run: make install
+        run: script -qec "make install" /dev/null
 
       - name: Test binary execution
         run: |
