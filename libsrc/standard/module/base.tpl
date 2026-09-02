@@ -1252,7 +1252,7 @@ DefineMacro="ImagePixelDescriptionMacro" InformationEntity="Instance"
 	Verify="PhotometricInterpretation"				Condition="JPEG2000LosslessTransferSyntaxAndThreeSamples"				StringEnumValues="PhotometricInterpretationYBRFullOrRGBOrYBR_RCT"
 
 	Verify="PhotometricInterpretation"				Condition="JPEG2000TransferSyntaxAndOneSample"							StringEnumValues="PhotometricInterpretationMonochrome"
-	Verify="PhotometricInterpretation"				Condition="JPEG2000TransferSyntaxAndThreeSamples"						StringEnumValues="PhotometricInterpretationYBRFullOrRGBOrYBR_RCTOrYBR_ICT"
+	Verify="PhotometricInterpretation"				Condition="JPEG2000TransferSyntaxAndThreeSamples"						StringEnumValues="PhotometricInterpretationYBRFullOrRGBOrYBR_RCTOrYBR_ICTOrYBRFull422"
 
 	Verify="PhotometricInterpretation"				Condition="MPEG2TransferSyntax"											StringEnumValues="PhotometricInterpretationYBRPartial420"	# regardless of number of samples (required to be 3 by PS 3.5)
 

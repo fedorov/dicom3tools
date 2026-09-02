@@ -67,10 +67,10 @@ main(int argc, char *argv[])
 
 	// derived from dciodvfy.checkOffsetTables()
 
-	//Attribute *aTransferSyntax=list[TagFromName(TransferSyntaxUID)];
-	//char *vTransferSyntax = NULL;
-	//if (aTransferSyntax) {
-	//	(void)aTransferSyntax->getValue(0,vTransferSyntax);
+	//Attribute *aTransferSyntaxUID=list[TagFromName(TransferSyntaxUID)];
+	//char *vTransferSyntaxUID = NULL;
+	//if (aTransferSyntaxUID) {
+	//	(void)aTransferSyntaxUID->getValue(0,vTransferSyntaxUID);
 	//}
 	TransferSyntax *dts=din.getTransferSyntaxToReadDataSet();
 	if (dts) {
@@ -95,6 +95,21 @@ main(int argc, char *argv[])
 		log << "Is an enhanced family instance without PerFrameFunctionalGroupsSequence" << endl;
 	}
 
+	// (000650)
+	{
+		Attribute *aDimensionOrganizationType=list[TagFromName(DimensionOrganizationType)];
+		char *vDimensionOrganizationType = NULL;
+		if (aDimensionOrganizationType) {
+			(void)aDimensionOrganizationType->getValue(0,vDimensionOrganizationType);
+			log << "Has DimensionOrganizationType of " << vDimensionOrganizationType << endl;
+		}
+
+		Attribute *aDimensionIndexSequence=list[TagFromName(DimensionIndexSequence)];
+		if (aDimensionIndexSequence) {
+			log << "Has DimensionIndexSequence" << endl;
+		}
+	}
+	
 	// (000639)
 	// Do not check whether is also enhanced family, as it should be, but could be standard extended SOP Class
 	Attribute *aConcatenationFrameOffsetNumber=list[TagFromName(ConcatenationFrameOffsetNumber)];

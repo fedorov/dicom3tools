@@ -749,6 +749,7 @@
 (0029,0010) VERS=""     VR="LO"   VM="1"	Owner="INFINITT Healthcare"			Keyword="?"		Name="?"
 (0029,0020) VERS=""     VR="LT"   VM="1"	Owner="INFINITT Healthcare"			Keyword="?"		Name="?"
 (0029,0030) VERS=""     VR="LT"   VM="1"	Owner="INFINITT Healthcare"			Keyword="?"		Name="?"
+(0029,0040) VERS=""     VR="SQ"   VM="1"	Owner="INFINITT Healthcare"			Keyword="?"		Name="?"
 (0029,0050) VERS=""     VR="LO"   VM="1"	Owner="INFINITT Healthcare"			Keyword="?"		Name="?"
 (0029,0060) VERS=""     VR="LO"   VM="1"	Owner="INFINITT Healthcare"			Keyword="?"		Name="?"
 
@@ -2755,6 +2756,8 @@
 (0925,0019) VERS="APE" VR="LO"   VM="1"		Owner="APERIO"		Keyword="ImageID"						Name="Image ID"
 (0925,0020) VERS="APE" VR="ST"   VM="1"		Owner="APERIO"		Keyword="Filename"						Name="Filename"
 (0925,0021) VERS="APE" VR="ST"   VM="1"		Owner="APERIO"		Keyword="CalibrationPointSource"		Name="Calibration Point Source"
+(0925,0022) VERS="APE" VR="LO"   VM="1"		Owner="APERIO"		Keyword="?"								Name="?"
+(0925,0023) VERS="APE" VR="LO"   VM="1"		Owner="APERIO"		Keyword="?"								Name="?"
 
 (0061,0002) VERS="UIH" VR="US"   VM="1"		Owner="DB Dicom Private Creator"		Keyword="GeneratePrivate"			Name="Generate Private"
 (0061,0002) VERS="UIH" VR="SH"   VM="1"		Owner="Common Private Header"			Keyword="FOV"			Name="FOV"

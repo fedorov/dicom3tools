@@ -973,6 +973,13 @@ StringValues="PhotometricInterpretationYBRRCTOrICTOrRGB" {
 	RGB
 }
 
+StringValues="PhotometricInterpretationYBRRCTOrICTOrRGBOrYBRFull422" {
+	YBR_RCT,
+	YBR_ICT,
+	YBR_FULL_422,
+	RGB
+}
+
 StringValues="PhotometricInterpretationYBRPartial420" {
 	YBR_PARTIAL_420
 }
@@ -983,6 +990,14 @@ StringValues="PhotometricInterpretationYBRFull" {
 
 StringValues="PhotometricInterpretationYBRFullOrRGBOrYBR_RCTOrYBR_ICT" {
 	YBR_FULL,
+	YBR_RCT,
+	YBR_ICT,
+	RGB
+}
+
+StringValues="PhotometricInterpretationYBRFullOrRGBOrYBR_RCTOrYBR_ICTOrYBRFull422" {
+	YBR_FULL,
+	YBR_FULL_422,
 	YBR_RCT,
 	YBR_ICT,
 	RGB
@@ -1281,7 +1296,8 @@ StringValues="LossyImageCompressionMethod" {
 	ISO_15444_15 = High-Throughput JPEG 2000 Irreversible Compression,
 	ISO_13818_2 = MPEG2 Compression,
 	ISO_14496_10 = MPEG-4 AVC/H.264 Compression,
-	ISO_18181_1 = JPEG XL Lossy Compression
+	ISO_18181_1 = JPEG XL Lossy Compression,
+	ISO_23008_2 = HEVC/H.265 Compression
 }
 
 StringValues="ContentItemValueTypes" {

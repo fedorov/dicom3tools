@@ -82,6 +82,11 @@ public:
 			return element >= 0x0001 && element <= 0x00ff;			// Sectra in mammo images illegally uses 0x0001
 		}
 
+	bool	isPrivateElement(void) const							// (000644)
+		{
+			return element >= 0x1000 && element <= 0xffff;			// 0100-0fff are not permitted - https://dicom.nema.org/medical/dicom/current/output/chtml/part05/sect_7.8.html#para_c772d8d5-6241-40f5-83e2-0a19653d6ee9
+		}
+
 	bool	isPrivateTag(void) const
 		{
 			return element >= 0x1000

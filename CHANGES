@@ -1,3 +1,25 @@
+260901:	libsrc/src/locale/mesgtext.tpl,appsrc/dcfile/dciodvfy.cc: Check for UIDs that use ISO and ITU-T roots are valid range (000651)
+
+260901:	appsrc/dcfile/dciodvfy.cc: Correct check for instance UIDs that use NEMA root but are not standard well-known instances (000620)
+
+260822:	appsrc/dcfile/dcinfo.cc: Describe dimension information (000650)
+
+260816:	libsrc/standard/condn.tpl,,strval/base.tpl: Check recently added values of LossyImageCompressionMethod against current TransferSyntaxUID (000649)
+
+260816:	libsrc/dctool/condn.cc,standard/condn.tpl,support/condn.awk: Check last rather than any value of LossyImageCompressionMethod against current TransferSyntaxUID since may have been multiple compression cycles (000648)
+
+260815:	libsrc/standard/elmdict/other.tpl: Add Aperio private data elements with VR encountered
+
+260812:	libsrc/standard/module/vl.tpl,strval/base.tpl: Permit YBR_FULL_422 for JPEG 2000 Transfer Syntax for WSI (000647)
+
+260812:	appsrc/dcfile/dciodvfy.cc,libsrc/src/locale/mesgtext.tpl: Check JPEG 2000 compressed bitstream matches PhotometricInterpretation (000646)
+
+260812:	appsrc/dcfile/dciodvfy.cc: Detect use of SRT identifier in SCT codes by checking for non-numeric characters (000645)
+
+260812:	include/dctool/attrtag.h,libsrc/src/dctool/attrmxls.cc,libsrc/src/locale/mesgtext.tpl: Report elements in private groups that are outside valid owner and private element range (000644)
+
+260812:	libsrc/standard/elmdict/other.tpl: Add Infinitt private data elements encountered
+
 260803:	libsrc/standard/elmdict/other.tpl: Add Agfa private data elements encountered
 
 260729:	libsrc/standard/elmdict/other.tpl: Update and add Sectra private data elements from PACS and VNA Workstation and Core CS 28.1, March 2026
