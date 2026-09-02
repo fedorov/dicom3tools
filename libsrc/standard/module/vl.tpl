@@ -558,7 +558,7 @@ Module="WholeSlideMicroscopyImage"
 	Verify="PhotometricInterpretation"								Condition="UncompressedTransferSyntaxAndThreeSamples"		StringEnumValues="PhotometricInterpretationRGB"
 	Verify="PhotometricInterpretation"								Condition="JPEGLSLosslessTransferSyntaxAndThreeSamples"		StringEnumValues="PhotometricInterpretationRGB"
 	Verify="PhotometricInterpretation"								Condition="JPEG2000LosslessTransferSyntaxAndThreeSamples"	StringEnumValues="PhotometricInterpretationYBRRCTOrRGB"
-	Verify="PhotometricInterpretation"								Condition="JPEG2000TransferSyntaxAndThreeSamples"			StringEnumValues="PhotometricInterpretationYBRRCTOrICTOrRGB"
+	Verify="PhotometricInterpretation"								Condition="JPEG2000TransferSyntaxAndThreeSamples"			StringEnumValues="PhotometricInterpretationYBRRCTOrICTOrRGBOrYBRFull422"
 	Verify="PhotometricInterpretation"								Condition="JPEGLossyTransferSyntaxAndThreeSamples"			StringEnumValues="PhotometricInterpretationYBRFull422OrRGB"
 
 	Name="PlanarConfiguration"							Type="1C"	BinaryEnumValues="PlanarConfigurationIsColorByPixel"	Condition="SamplesPerPixelGreaterThanOne"

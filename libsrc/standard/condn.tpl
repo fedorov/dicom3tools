@@ -6323,7 +6323,7 @@ Condition="LossyImageCompressionMethodInconsistentWithTransferSyntax"
 	) Modifier="Not" Operator="And"
 	(
 		(
-			Element="LossyImageCompressionMethod"	StringValue="ISO_10918_1"
+			Element="LossyImageCompressionMethod"		ValueSelector="n" StringValue="ISO_10918_1"
 			(
 				Element="TransferSyntaxUID"	              StringValue="1.2.840.10008.1.2.4.50"
 				Element="TransferSyntaxUID"	Operator="Or" StringValue="1.2.840.10008.1.2.4.51"
@@ -6341,28 +6341,65 @@ Condition="LossyImageCompressionMethodInconsistentWithTransferSyntax"
 			) Modifier="Not" Operator="And"
 		) Operator="Or"
 		(
-			Element="LossyImageCompressionMethod"	StringValue="ISO_14495_1"
+			Element="LossyImageCompressionMethod"	ValueSelector="n" StringValue="ISO_14495_1"
 			(
 				Element="TransferSyntaxUID"	              StringValue="1.2.840.10008.1.2.4.81"
 			) Modifier="Not" Operator="And"
 		) Operator="Or"
 		(
-			Element="LossyImageCompressionMethod"	StringValue="ISO_15444_1"
+			Element="LossyImageCompressionMethod"	ValueSelector="n" StringValue="ISO_15444_1"
 			(
 				Element="TransferSyntaxUID"	              StringValue="1.2.840.10008.1.2.4.91"
 			) Modifier="Not" Operator="And"
 		) Operator="Or"
 		(
-			Element="LossyImageCompressionMethod"	StringValue="ISO_15444_2"
+			Element="LossyImageCompressionMethod"	ValueSelector="n" StringValue="ISO_15444_2"
 			(
 				Element="TransferSyntaxUID"	              StringValue="1.2.840.10008.1.2.4.93"
 			) Modifier="Not" Operator="And"
 		) Operator="Or"
 		(
-			Element="LossyImageCompressionMethod"	StringValue="ISO_13818_2"
+			Element="LossyImageCompressionMethod"	ValueSelector="n" StringValue="ISO_15444_15"
+			(
+				Element="TransferSyntaxUID"	              StringValue="1.2.840.10008.1.2.4.203"
+			) Modifier="Not" Operator="And"
+		) Operator="Or"
+		(
+			Element="LossyImageCompressionMethod"	ValueSelector="n" StringValue="ISO_13818_2"
 			(
 				Element="TransferSyntaxUID"	              StringValue="1.2.840.10008.1.2.4.100"
 				Element="TransferSyntaxUID"	Operator="Or" StringValue="1.2.840.10008.1.2.4.101"
+				Element="TransferSyntaxUID"	Operator="Or" StringValue="1.2.840.10008.1.2.4.100.1"
+				Element="TransferSyntaxUID"	Operator="Or" StringValue="1.2.840.10008.1.2.4.101.1"
+			) Modifier="Not" Operator="And"
+		) Operator="Or"
+		(
+			Element="LossyImageCompressionMethod"	ValueSelector="n" StringValue="ISO_14496_10"
+			(
+				Element="TransferSyntaxUID"	              StringValue="1.2.840.10008.1.2.4.102"
+				Element="TransferSyntaxUID"	Operator="Or" StringValue="1.2.840.10008.1.2.4.103"
+				Element="TransferSyntaxUID"	Operator="Or" StringValue="1.2.840.10008.1.2.4.104"
+				Element="TransferSyntaxUID"	Operator="Or" StringValue="1.2.840.10008.1.2.4.105"
+				Element="TransferSyntaxUID"	Operator="Or" StringValue="1.2.840.10008.1.2.4.106"
+				Element="TransferSyntaxUID" Operator="Or" StringValue="1.2.840.10008.1.2.4.102.1"
+				Element="TransferSyntaxUID"	Operator="Or" StringValue="1.2.840.10008.1.2.4.103.1"
+				Element="TransferSyntaxUID"	Operator="Or" StringValue="1.2.840.10008.1.2.4.104.1"
+				Element="TransferSyntaxUID"	Operator="Or" StringValue="1.2.840.10008.1.2.4.105.1"
+				Element="TransferSyntaxUID"	Operator="Or" StringValue="1.2.840.10008.1.2.4.106.1"
+			) Modifier="Not" Operator="And"
+		) Operator="Or"
+		(
+			Element="LossyImageCompressionMethod"	ValueSelector="n" StringValue="ISO_23008_2"
+			(
+				Element="TransferSyntaxUID"	              StringValue="1.2.840.10008.1.2.4.107"
+				Element="TransferSyntaxUID"	Operator="Or" StringValue="1.2.840.10008.1.2.4.108"
+			) Modifier="Not" Operator="And"
+		) Operator="Or"
+		(
+			Element="LossyImageCompressionMethod"	ValueSelector="n" StringValue="ISO_18181_1"
+			(
+				Element="TransferSyntaxUID"	              StringValue="1.2.840.10008.1.2.4.111"
+				Element="TransferSyntaxUID"	Operator="Or" StringValue="1.2.840.10008.1.2.4.112"
 			) Modifier="Not" Operator="And"
 		) Operator="Or"
 	) Operator="And"

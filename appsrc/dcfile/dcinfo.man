@@ -1,4 +1,4 @@
-.TH DCINFO 1 "24 Hune 2026" "DICOM PS3" "DICOM PS3 - Summarize information about DICOM file content"
+.TH DCINFO 1 "22 August 2026" "DICOM PS3" "DICOM PS3 - Summarize information about DICOM file content"
 .SH NAME
 dcinfo \- ACR/NEMA DICOM PS3 ... DICOM PS3 - Summarize information about DICOM file content
 .SH SYNOPSIS
@@ -66,6 +66,10 @@ Transfer Syntax to read data set is encapsulated
 Is an enhanced family instance
 .RE
 Is an enhanced family instance without PerFrameFunctionalGroupsSequence
+.RE
+Has DimensionOrganizationType of TILED_SPARSE
+.RE
+Has DimensionIndexSequence
 .RE
 Is not an instance of a Concatenation
 .RE
