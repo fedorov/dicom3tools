@@ -23,37 +23,33 @@ jobs:
 
       - name: Install build dependencies
         run: |
-          # imake and makedepend drive the build;
-          # gawk is required because the BSD awk shipped with macOS cannot process
-          # the header generation scripts in libsrc/support (see INSTALL);
-          # libx11/libxext provide the X11 headers needed to compile libourdisp
-          brew install imake makedepend gawk libx11 libxext
+          # imake and makedepend drive the build; gawk is required because the
+          # BSD awk shipped with macOS cannot process the header generation
+          # scripts in libsrc/support (see INSTALL)
+          brew install imake makedepend gawk
 
-      - name: Exclude the X11 display application
+      - name: Install XQuartz
         run: |
-          # dcdisp is the only program that has to link against libX11/libXext, and
-          # the Homebrew X11 libraries are single architecture, so it cannot go into
-          # a universal binary. Upstream's own macOS distribution does not ship it
-          # either (see ARCHIVEMACEXEFILES in the top level Imakefile).
-          sed -i.bak 's/^SUBDIRS = acrnema dcdisp /SUBDIRS = acrnema /' appsrc/Imakefile
-          grep '^SUBDIRS' appsrc/Imakefile
+          # dcdisp is the one program that links X11. XQuartz is used rather than
+          # the Homebrew X11 formulae for two reasons: its libraries are universal
+          # (x86_64 i386 arm64), so they can be linked into a universal binary, and
+          # /opt/X11 is where an end user's X11 lives, so the dcdisp we ship
+          # resolves against their XQuartz rather than a Homebrew prefix they may
+          # not have. Configure picks /opt/X11 up on its own.
+          brew install --cask xquartz
+          lipo -info /opt/X11/lib/libX11.6.dylib
 
       - name: Configure
         run: ./Configure
 
       - name: Run imake
-        run: |
-          # Configure only looks for X11 in /opt/X11, /opt/local and /usr/X11R6,
-          # none of which exist without XQuartz or MacPorts, so point imake at the
-          # Homebrew prefix (headers are all that is needed once dcdisp is skipped)
-          imake -I./config -DInstallInTopDir \
-            -DX11IncludePath="$(brew --prefix)/include" \
-            -DX11LibraryPath="$(brew --prefix)/lib"
+        run: imake -I./config -DInstallInTopDir
 
       - name: Build
-        # The awk scripts that generate the dconvert headers write their diagnostics
-        # to /dev/tty, which is fatal to gawk when there is no controlling terminal.
-        # script(1) supplies a pseudo terminal and passes the exit status through.
+        # The awk scripts that generate the dconvert headers write their
+        # diagnostics to /dev/tty, which is fatal to gawk when there is no
+        # controlling terminal. script(1) supplies a pseudo terminal; -e passes
+        # the exit status of the command through.
         run: script -q /dev/null make World
 
       - name: Install
@@ -104,6 +100,21 @@ jobs:
           echo "Minimum macOS version:"
           otool -l "bin/$PLATFORM_DIR/dciodvfy" | grep -A4 LC_BUILD_VERSION | head -12
 
+          # dcdisp must resolve X11 out of /opt/X11, where the user's XQuartz is,
+          # not out of a Homebrew prefix
+          echo ""
+          echo "Dependencies for dcdisp:"
+          otool -L "bin/$PLATFORM_DIR/dcdisp"
+          if otool -L "bin/$PLATFORM_DIR/dcdisp" | grep -qE '/(opt/homebrew|usr/local)/'; then
+              echo "✗ dcdisp links a Homebrew library, which end users will not have"
+              exit 1
+          fi
+          otool -L "bin/$PLATFORM_DIR/dcdisp" | grep -q '/opt/X11/lib/libX11' || {
+              echo "✗ dcdisp does not link /opt/X11/lib/libX11"
+              exit 1
+          }
+          echo "✓ dcdisp links X11 from /opt/X11"
+
           echo ""
           echo "Checking that every binary carries both architectures..."
           for binary in "bin/$PLATFORM_DIR"/*; do
@@ -128,23 +139,57 @@ jobs:
           # Get the platform-specific directory name
           PLATFORM_DIR=$(ls -1 bin | head -1)
           echo "Platform directory: $PLATFORM_DIR"
+          SRC="bin/$PLATFORM_DIR"
 
-          # Create a tar.gz archive of the binaries, without AppleDouble metadata
-          cd bin/$PLATFORM_DIR
-          COPYFILE_DISABLE=1 tar -czf ../../dicom3tools-macos-universal.tar.gz .
-          cd ../..
+          # Three packages out of the one build: the universal binaries as built,
+          # plus single architecture packages of half the size, split out with
+          # lipo (which preserves each slice's ad-hoc code signature)
+          mkdir -p pkg/universal pkg/arm64 pkg/x86_64
+          for f in "$SRC"/*; do
+              b=$(basename "$f")
+              cp -p "$f" "pkg/universal/$b"
+              if file -b "$f" | grep -q Mach-O; then
+                  lipo -thin arm64  "$f" -output "pkg/arm64/$b"
+                  lipo -thin x86_64 "$f" -output "pkg/x86_64/$b"
+              else
+                  cp -p "$f" "pkg/arm64/$b"
+                  cp -p "$f" "pkg/x86_64/$b"
+              fi
+          done
 
-      - name: Upload artifact
+          for a in universal arm64 x86_64; do
+              (cd "pkg/$a" && COPYFILE_DISABLE=1 tar -czf "../../dicom3tools-macos-$a.tar.gz" .)
+          done
+          ls -lh dicom3tools-macos-*.tar.gz
+
+      - name: Upload universal artifact
         uses: actions/upload-artifact@v7
         with:
           name: dicom3tools-macos-universal
           path: dicom3tools-macos-universal.tar.gz
           retention-days: 90
 
+      - name: Upload arm64 artifact
+        uses: actions/upload-artifact@v7
+        with:
+          name: dicom3tools-macos-arm64
+          path: dicom3tools-macos-arm64.tar.gz
+          retention-days: 90
+
+      - name: Upload x86_64 artifact
+        uses: actions/upload-artifact@v7
+        with:
+          name: dicom3tools-macos-x86_64
+          path: dicom3tools-macos-x86_64.tar.gz
+          retention-days: 90
+
       - name: Attach to release
         if: github.event_name == 'release'
         uses: softprops/action-gh-release@v3
         with:
-          files: dicom3tools-macos-universal.tar.gz
+          files: |
+            dicom3tools-macos-universal.tar.gz
+            dicom3tools-macos-arm64.tar.gz
+            dicom3tools-macos-x86_64.tar.gz
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

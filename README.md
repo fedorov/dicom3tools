@@ -41,16 +41,17 @@ To download pre-built Linux binaries:
 
 A second GitHub Action builds macOS packages. The workflow:
 - Runs on **macOS 15** (Apple Silicon) but produces **universal binaries** (x86_64 + arm64), as configured by `Configure` for Darwin
-- Installs the build dependencies from Homebrew (imake, makedepend, gawk, libx11, libxext)
-- Skips `dcdisp`, the X11 image display application, because the Homebrew X11 libraries are single architecture and cannot be linked into a universal binary (upstream's own macOS distribution does not ship `dcdisp` either)
+- Installs imake, makedepend and gawk from Homebrew, and XQuartz for X11
 - Builds the project using the standard build process (Configure, imake, make World), under a pseudo terminal because the header generation scripts write their diagnostics to `/dev/tty`
 - Tests binary execution to ensure they work correctly
 - Checks that every binary contains both architectures, and reports its library dependencies and minimum macOS version
-- Packages the binaries into a tar.gz archive
-- Uploads the package as a workflow artifact (retained for 90 days)
-- Attaches the package to GitHub releases when a new release is published
+- Packages the binaries into three tar.gz archives: universal, arm64 only and x86_64 only, the last two split out of the universal build with `lipo`
+- Uploads the packages as workflow artifacts (retained for 90 days)
+- Attaches the packages to GitHub releases when a new release is published
 
-The binaries are built with `-mmacosx-version-min=10.9` (x86_64) so they run on a wide range of macOS versions, and link only against the system libraries (libSystem and libc++).
+The binaries are built with `-mmacosx-version-min=10.9`, so the x86_64 slice runs on macOS 10.9 and later and the arm64 slice on macOS 11.0 and later (the floor for Apple Silicon). They link only against the system libraries (libSystem and libc++), with one exception: `dcdisp` links X11 from `/opt/X11`, so **running `dcdisp` requires [XQuartz](https://www.xquartz.org)** to be installed. Every other tool runs with no dependencies beyond macOS itself.
+
+XQuartz rather than the Homebrew X11 formulae is used to build `dcdisp` for two reasons: the XQuartz libraries are universal (`x86_64 i386 arm64`), so they can be linked into a universal binary, and `/opt/X11` is where an end user's X11 lives, so the shipped `dcdisp` resolves against their XQuartz rather than a Homebrew prefix they may not have.
 
 The workflow can also be triggered manually via the "Actions" tab.
 
@@ -58,7 +59,10 @@ The workflow can also be triggered manually via the "Actions" tab.
 
 To download pre-built macOS binaries:
 1. Go to the [Releases](../../releases) page
-2. Download the `dicom3tools-macos-universal.tar.gz` file
+2. Download one of:
+   - `dicom3tools-macos-universal.tar.gz` — runs on both Apple Silicon and Intel; pick this one if unsure
+   - `dicom3tools-macos-arm64.tar.gz` — Apple Silicon only, half the size
+   - `dicom3tools-macos-x86_64.tar.gz` — Intel only, half the size
 3. Extract the archive: `tar -xzf dicom3tools-macos-universal.tar.gz`
 4. Remove the download quarantine flag so Gatekeeper allows them to run: `xattr -dr com.apple.quarantine .`
 5. The binaries will be in the current directory
