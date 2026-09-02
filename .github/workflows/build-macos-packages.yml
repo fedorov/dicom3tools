@@ -1,0 +1,150 @@
+name: Build macOS Packages
+
+on:
+  release:
+    types: [published]
+  workflow_dispatch:
+
+jobs:
+  build-macos:
+    # Apple Silicon runner; the binaries produced are universal (x86_64 + arm64),
+    # since Configure builds Darwin for both architectures by default
+    runs-on: macos-15
+    permissions:
+      contents: write
+
+    env:
+      HOMEBREW_NO_AUTO_UPDATE: 1
+      HOMEBREW_NO_INSTALL_CLEANUP: 1
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v7
+
+      - name: Install build dependencies
+        run: |
+          # imake and makedepend drive the build;
+          # gawk is required because the BSD awk shipped with macOS cannot process
+          # the header generation scripts in libsrc/support (see INSTALL);
+          # libx11/libxext provide the X11 headers needed to compile libourdisp
+          brew install imake makedepend gawk libx11 libxext
+
+      - name: Exclude the X11 display application
+        run: |
+          # dcdisp is the only program that has to link against libX11/libXext, and
+          # the Homebrew X11 libraries are single architecture, so it cannot go into
+          # a universal binary. Upstream's own macOS distribution does not ship it
+          # either (see ARCHIVEMACEXEFILES in the top level Imakefile).
+          sed -i.bak 's/^SUBDIRS = acrnema dcdisp /SUBDIRS = acrnema /' appsrc/Imakefile
+          grep '^SUBDIRS' appsrc/Imakefile
+
+      - name: Configure
+        run: ./Configure
+
+      - name: Run imake
+        run: |
+          # Configure only looks for X11 in /opt/X11, /opt/local and /usr/X11R6,
+          # none of which exist without XQuartz or MacPorts, so point imake at the
+          # Homebrew prefix (headers are all that is needed once dcdisp is skipped)
+          imake -I./config -DInstallInTopDir \
+            -DX11IncludePath="$(brew --prefix)/include" \
+            -DX11LibraryPath="$(brew --prefix)/lib"
+
+      - name: Build
+        # The awk scripts that generate the dconvert headers write their diagnostics
+        # to /dev/tty, which is fatal to gawk when there is no controlling terminal.
+        # script(1) supplies a pseudo terminal and passes the exit status through.
+        run: script -q /dev/null make World
+
+      - name: Install
+        run: script -q /dev/null make install
+
+      - name: Test binary execution
+        run: |
+          echo "Testing binary execution to ensure they work correctly..."
+
+          # Get the platform-specific directory name
+          PLATFORM_DIR=$(ls -1 bin | head -1)
+          echo "Platform directory: $PLATFORM_DIR"
+
+          # Test a few key binaries
+          BINARIES="dciodvfy dcdump dcfile dcentvfy"
+
+          for binary in $BINARIES; do
+              BINARY_PATH="bin/$PLATFORM_DIR/$binary"
+              if [ -f "$BINARY_PATH" ]; then
+                  echo "Testing $binary..."
+                  # Test that the binary can at least show usage without crashing
+                  if $BINARY_PATH 2>&1 | head -5; then
+                      echo "✓ $binary executed successfully"
+                  else
+                      echo "✗ $binary failed to execute"
+                      exit 1
+                  fi
+              else
+                  echo "✗ $binary not found at $BINARY_PATH"
+                  exit 1
+              fi
+          done
+
+          echo "All binary execution tests passed!"
+
+      - name: Check binary architectures and dependencies
+        run: |
+          PLATFORM_DIR=$(ls -1 bin | head -1)
+
+          echo "Architectures in dciodvfy:"
+          lipo -info "bin/$PLATFORM_DIR/dciodvfy"
+
+          echo ""
+          echo "Dependencies for dciodvfy:"
+          otool -L "bin/$PLATFORM_DIR/dciodvfy"
+
+          echo ""
+          echo "Minimum macOS version:"
+          otool -l "bin/$PLATFORM_DIR/dciodvfy" | grep -A4 LC_BUILD_VERSION | head -12
+
+          echo ""
+          echo "Checking that every binary carries both architectures..."
+          for binary in "bin/$PLATFORM_DIR"/*; do
+              [ -f "$binary" ] || continue
+              # dccmp and dcdiff are shell scripts, not Mach-O
+              case "$(file -b "$binary")" in
+                  *Mach-O*) ;;
+                  *) continue ;;
+              esac
+              ARCHS=$(lipo -archs "$binary")
+              case "$ARCHS" in
+                  *x86_64*arm64*|*arm64*x86_64*)
+                      echo "✓ $(basename "$binary"): $ARCHS" ;;
+                  *)
+                      echo "✗ $(basename "$binary") is not universal: $ARCHS"
+                      exit 1 ;;
+              esac
+          done
+
+      - name: Package binaries
+        run: |
+          # Get the platform-specific directory name
+          PLATFORM_DIR=$(ls -1 bin | head -1)
+          echo "Platform directory: $PLATFORM_DIR"
+
+          # Create a tar.gz archive of the binaries, without AppleDouble metadata
+          cd bin/$PLATFORM_DIR
+          COPYFILE_DISABLE=1 tar -czf ../../dicom3tools-macos-universal.tar.gz .
+          cd ../..
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v7
+        with:
+          name: dicom3tools-macos-universal
+          path: dicom3tools-macos-universal.tar.gz
+          retention-days: 90
+
+      - name: Attach to release
+        if: github.event_name == 'release'
+        uses: softprops/action-gh-release@v3
+        with:
+          files: dicom3tools-macos-universal.tar.gz
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
