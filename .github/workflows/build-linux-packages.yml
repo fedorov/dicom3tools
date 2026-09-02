@@ -7,107 +7,230 @@ on:
 
 jobs:
   build-linux:
-    runs-on: ubuntu-22.04
+    # Built inside a manylinux container rather than on the runner itself. A
+    # binary's glibc floor is set by the glibc it was linked against, and
+    # nothing in the source or the link line can lower it: an ubuntu-22.04
+    # build (glibc 2.35) picks up __libc_start_main@GLIBC_2.34 and
+    # pow/log@GLIBC_2.29 purely as an artifact of the host, which makes the
+    # asset unloadable in the manylinux containers where downstream projects
+    # such as dcmqi run their dciodvfy conformance tests. See issue #19.
+    #
+    # Note this is not a `container:` job. A container job runs the JS actions
+    # (checkout, upload-artifact) on the node binary the runner injects into
+    # the image, and that needs glibc >= 2.28, which manylinux2014 does not
+    # have. So the host runner does the checkout, packaging and upload, and
+    # only Configure/imake/make run in the container.
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          # manylinux2014 is CentOS 7: glibc 2.17, which covers every consumer
+          # at or above that, including dcmqi's dockcross/manylinux2014-x64
+          # test container. The image is frozen (CentOS 7 is EOL) but its yum
+          # repositories still resolve against vault.centos.org. If it ever
+          # goes away, manylinux_2_28_x86_64 is the fallback, at a 2.28 floor.
+          - arch: x86_64
+            runner: ubuntu-24.04
+            image: quay.io/pypa/manylinux2014_x86_64
+            install: yum install -y imake
+            glibc_floor: '2.17'
+          # manylinux_2_28 is AlmaLinux 8: glibc 2.28, matching the floor of
+          # dcmqi's own arm64 package. imake lives in the powertools repo
+          # there, which ships disabled. Built on a native arm64 runner, free
+          # for public repositories, so nothing is emulated.
+          - arch: aarch64
+            runner: ubuntu-24.04-arm
+            image: quay.io/pypa/manylinux_2_28_aarch64
+            install: dnf install -y --enablerepo=powertools imake
+            glibc_floor: '2.28'
+
+    runs-on: ${{ matrix.runner }}
     permissions:
       contents: write
-    
+
     steps:
       - name: Checkout repository
         uses: actions/checkout@v7
 
-      - name: Install build dependencies
+      - name: Write container build script
+        # Kept out of the workspace so it cannot end up in the archive.
         run: |
-          sudo apt-get update
-          sudo apt-get install -y g++ xutils-dev libx11-dev libxext-dev
+          cat > "$RUNNER_TEMP/build-in-container.sh" <<'SCRIPT'
+          #!/bin/bash
+          set -e
 
-      - name: Configure
-        run: ./Configure
+          # The container runs as root while the workspace belongs to the
+          # runner user, and the packaging step that follows runs as that user.
+          # Hand ownership back however this script exits.
+          trap 'chown -R "$HOST_UID:$HOST_GID" /work' EXIT
 
-      - name: Run imake
-        run: imake -I./config -DInstallInTopDir
+          echo "::group::Container environment"
+          cat /etc/redhat-release
+          ldd --version | head -1
+          g++ --version | head -1
+          echo "::endgroup::"
 
-      - name: Build
-        # The awk scripts that generate the dconvert headers write their
-        # diagnostics to /dev/tty, which is fatal to gawk when there is no
-        # controlling terminal, and silently costs us the himr and ge9800
-        # converters. script(1) supplies a pseudo terminal; -e passes the exit
-        # status of the command through.
-        run: script -qec "make World" /dev/null
+          echo "::group::Install imake"
+          # One package supplies imake, makedepend and mkdirhier. gawk, the X11
+          # headers and libX11/libXext are already in the manylinux images, so
+          # this is the only thing that has to be fetched.
+          eval "$INSTALL_CMD"
+          echo "::endgroup::"
 
-      - name: Install
-        run: script -qec "make install" /dev/null
+          # The awk scripts that generate the dconvert headers write their
+          # diagnostics to /dev/tty, which is fatal to gawk when there is no
+          # controlling terminal, and silently costs us the himr and ge9800
+          # converters. The macOS and Windows workflows use script(1) to supply
+          # a pseudo terminal, but that cannot be used here: CentOS 7 ships
+          # util-linux 2.23.2, whose script kills the child as soon as its own
+          # stdin reaches EOF - which is how every Actions step runs it - and
+          # whose -e never propagates the child's exit status. Under it,
+          # `make World` produced a 15 byte log, built nothing, and reported
+          # success. Python's pty.spawn gets both right on every image here.
+          PYTHON=$(ls -d /opt/python/cp3*/bin/python3 | head -1)
+          runpty() {
+              "$PYTHON" -c 'import pty, sys, os; sys.exit(os.waitstatus_to_exitcode(pty.spawn(sys.argv[1:])))' "$@"
+          }
 
-      - name: Test binary execution
-        run: |
-          echo "Testing binary execution to ensure they work correctly..."
-          
-          # Get the platform-specific directory name
+          echo "::group::Configure"
+          ./Configure
+          echo "::endgroup::"
+
+          echo "::group::imake"
+          imake -I./config -DInstallInTopDir
+          echo "::endgroup::"
+
+          echo "::group::make World"
+          runpty make World
+          echo "::endgroup::"
+
+          echo "::group::make install"
+          runpty make install
+          echo "::endgroup::"
+
           PLATFORM_DIR=$(ls -1 bin | head -1)
           echo "Platform directory: $PLATFORM_DIR"
-          
-          # Test a few key binaries
-          BINARIES="dciodvfy dcdump dcfile dcentvfy"
-          
-          for binary in $BINARIES; do
-              BINARY_PATH="bin/$PLATFORM_DIR/$binary"
-              if [ -f "$BINARY_PATH" ]; then
-                  echo "Testing $binary..."
-                  # Test that the binary can at least show usage without crashing
-                  if $BINARY_PATH 2>&1 | head -5; then
-                      echo "✓ $binary executed successfully"
-                  else
-                      echo "✗ $binary failed to execute"
-                      exit 1
-                  fi
-              else
-                  echo "⚠ $binary not found at $BINARY_PATH"
-              fi
-          done
-          
-          echo "All binary execution tests passed!"
+          echo "Programs built: $(ls -1 "bin/$PLATFORM_DIR" | wc -l)"
 
-      - name: Check binary dependencies
+          # `make World` returns 0 even when a subdirectory fails - a broken
+          # dconvert build reports "Error 2" and the top level make still exits
+          # 0 - so the exit status above guarantees nothing. These checks are
+          # what actually gates the archive. himrtodc, himrdump, ge9800todc and
+          # ge9800dump are the canaries for the /dev/tty problem described
+          # above: they are exactly what goes missing when the awk header
+          # generation runs without a terminal. (himrunid is not, despite the
+          # name: it is an installed script, so it appears either way.)
+          echo "Checking that the build is complete..."
+          MISSING=""
+          for program in dciodvfy dcdump dcfile dcentvfy dcdisp \
+                         himrtodc himrdump ge9800todc ge9800dump; do
+              [ -f "bin/$PLATFORM_DIR/$program" ] || MISSING="$MISSING $program"
+          done
+          if [ -n "$MISSING" ]; then
+              echo "✗ incomplete build, missing:$MISSING"
+              exit 1
+          fi
+          echo "✓ all required programs present"
+
+          echo "Testing binary execution to ensure they work correctly..."
+          for program in dciodvfy dcdump dcfile dcentvfy; do
+              # stdin from /dev/null so a program that reads it cannot hang.
+              # Captured through an if so that set -e does not fire on the
+              # non-zero status a usage message legitimately exits with, and so
+              # that the status is the program's own and not head's.
+              if OUTPUT=$("bin/$PLATFORM_DIR/$program" </dev/null 2>&1); then
+                  STATUS=0
+              else
+                  STATUS=$?
+              fi
+              printf '%s\n' "$OUTPUT" | head -5
+              if [ "$STATUS" -ge 128 ]; then
+                  echo "✗ $program died on signal $((STATUS - 128))"
+                  exit 1
+              fi
+              echo "✓ $program executed successfully"
+          done
+
+          echo "::group::Dependencies of dciodvfy and dcdisp"
+          # dcdisp is the one program that links X11; the archive ships no X11
+          # of its own, so it resolves against the user's libX11.so.6.
+          for program in dciodvfy dcdisp; do
+              echo "$program:"
+              objdump -p "bin/$PLATFORM_DIR/$program" | grep NEEDED
+              readelf -V "bin/$PLATFORM_DIR/$program" \
+                  | grep -oE '(GLIBC|GLIBCXX|CXXABI|GCC)_[0-9.]+' | sort -u -V | tr '\n' ' '
+              echo
+          done
+          echo "::endgroup::"
+
+          # The regression guard for issue #19: the highest versioned glibc
+          # symbol any shipped program references is its true floor, and it must
+          # stay at or below the container's glibc.
+          #
+          # bin also holds shell scripts (dccmp, dcdiff), and they have to be
+          # recognised by their ELF magic rather than by letting readelf reject
+          # them: CentOS 7's readelf aborts on a non-ELF file instead of
+          # failing cleanly, which works but fills the log with signal noise.
+          is_elf() {
+              [ "$(od -A n -t x1 -N 4 "$1" 2>/dev/null | tr -d ' ')" = "7f454c46" ]
+          }
+
+          echo "Checking the glibc floor of every program..."
+          HIGHEST=$(
+              for f in "bin/$PLATFORM_DIR"/*; do
+                  is_elf "$f" || continue
+                  readelf -V "$f" | grep -oE 'GLIBC_[0-9]+\.[0-9]+(\.[0-9]+)?'
+              done | sed 's/^GLIBC_//' | sort -u -V | tail -1
+          )
+          echo "Highest glibc symbol version referenced: ${HIGHEST:-none}"
+          if [ -z "$HIGHEST" ]; then
+              # Every program is dynamically linked against glibc, so finding
+              # no versioned reference at all means the scan itself broke
+              # rather than that the floor is low.
+              echo "✗ found no glibc symbol versions to check"
+              exit 1
+          fi
+          if [ "$(printf '%s\n%s\n' "$HIGHEST" "$GLIBC_FLOOR" | sort -V | tail -1)" != "$GLIBC_FLOOR" ]; then
+              echo "✗ requires glibc $HIGHEST, above the $GLIBC_FLOOR floor this package promises"
+              exit 1
+          fi
+          echo "✓ glibc floor is $GLIBC_FLOOR or lower"
+          SCRIPT
+
+      - name: Build in ${{ matrix.image }}
         run: |
-          echo "Checking binary dependencies..."
-          
-          # Get the platform-specific directory name
-          PLATFORM_DIR=$(ls -1 bin | head -1)
-          
-          # Check dependencies for a key binary
-          echo "Dependencies for dciodvfy:"
-          ldd bin/$PLATFORM_DIR/dciodvfy
-          
-          # Check GLIBC and GLIBCXX versions required
-          echo ""
-          echo "Required GLIBC versions:"
-          objdump -T bin/$PLATFORM_DIR/dciodvfy | grep GLIBC | awk '{print $5}' | grep GLIBC | sort -u
-          
-          echo ""
-          echo "Required GLIBCXX versions:"
-          objdump -T bin/$PLATFORM_DIR/dciodvfy | grep GLIBCXX | awk '{print $5}' | grep GLIBCXX | sort -u
+          docker run --rm \
+            -v "$PWD":/work -w /work \
+            -v "$RUNNER_TEMP/build-in-container.sh":/build-in-container.sh:ro \
+            -e INSTALL_CMD="${{ matrix.install }}" \
+            -e GLIBC_FLOOR="${{ matrix.glibc_floor }}" \
+            -e HOST_UID="$(id -u)" -e HOST_GID="$(id -g)" \
+            "${{ matrix.image }}" bash /build-in-container.sh
 
       - name: Package binaries
         run: |
           # Get the platform-specific directory name
           PLATFORM_DIR=$(ls -1 bin | head -1)
           echo "Platform directory: $PLATFORM_DIR"
-          
-          # Create a tar.gz archive of the binaries
-          cd bin/$PLATFORM_DIR
-          tar -czf ../../dicom3tools-linux-x86_64.tar.gz .
+
+          # Flat archive, tools at the root, matching the macOS and Windows
+          # packages: consumers can put one directory on PATH.
+          cd "bin/$PLATFORM_DIR"
+          tar -czf "../../dicom3tools-linux-${{ matrix.arch }}.tar.gz" .
           cd ../..
+          ls -lh "dicom3tools-linux-${{ matrix.arch }}.tar.gz"
 
       - name: Upload artifact
         uses: actions/upload-artifact@v7
         with:
-          name: dicom3tools-linux-x86_64
-          path: dicom3tools-linux-x86_64.tar.gz
+          name: dicom3tools-linux-${{ matrix.arch }}
+          path: dicom3tools-linux-${{ matrix.arch }}.tar.gz
           retention-days: 90
 
       - name: Attach to release
         if: github.event_name == 'release'
         uses: softprops/action-gh-release@v3
         with:
-          files: dicom3tools-linux-x86_64.tar.gz
+          files: dicom3tools-linux-${{ matrix.arch }}.tar.gz
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

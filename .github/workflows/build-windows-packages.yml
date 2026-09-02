@@ -73,6 +73,38 @@ jobs:
       - name: Install
         run: script -qec "make install" /dev/null
 
+      - name: Check build completeness
+        # `make World` returns 0 even when a subdirectory fails - a broken
+        # dconvert build reports "Error 2" and the top level make still exits 0
+        # - so neither build step above can be trusted to have built
+        # everything. himrtodc, himrdump, ge9800todc and ge9800dump are the
+        # canaries for the /dev/tty problem described on the Build step: they
+        # are exactly what goes missing when the awk header generation runs
+        # without a controlling terminal, and without this check a package
+        # short of them would ship silently. Runs before the DLL bundling,
+        # which has nothing useful to do on a truncated build.
+        #
+        # Programs are matched with and without .exe: most are executables, but
+        # some (himrunid, dccmp, dcdiff) are installed scripts and carry no
+        # suffix even here.
+        run: |
+          PLATFORM_DIR=$(ls -1 bin | head -1)
+          echo "Platform directory: $PLATFORM_DIR"
+          echo "Programs built: $(ls -1 "bin/$PLATFORM_DIR" | wc -l)"
+
+          MISSING=""
+          for program in dciodvfy dcdump dcfile dcentvfy dcdisp \
+                         himrtodc himrdump ge9800todc ge9800dump; do
+              [ -f "bin/$PLATFORM_DIR/$program" ] \
+                  || [ -f "bin/$PLATFORM_DIR/$program.exe" ] \
+                  || MISSING="$MISSING $program"
+          done
+          if [ -n "$MISSING" ]; then
+              echo "✗ incomplete build, missing:$MISSING"
+              exit 1
+          fi
+          echo "✓ all required programs present"
+
       - name: Bundle Cygwin runtime DLLs
         run: |
           # Ship the Cygwin DLLs alongside the executables so the package runs
@@ -131,8 +163,8 @@ jobs:
           for binary in $BINARIES; do
               BINARY_PATH="bin/$PLATFORM_DIR/$binary.exe"
               if [ ! -f "$BINARY_PATH" ]; then
-                  echo "⚠ $binary not found at $BINARY_PATH"
-                  continue
+                  echo "✗ $binary not found at $BINARY_PATH"
+                  exit 1
               fi
 
               echo "Testing $binary..."
