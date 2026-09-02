@@ -1,0 +1,164 @@
+name: Build Windows Packages
+
+on:
+  release:
+    types: [published]
+  workflow_dispatch:
+
+jobs:
+  build-windows:
+    # Not pinned to a dated image on purpose: the whole toolchain comes from
+    # Cygwin, so the runner image has no bearing on the binaries we produce
+    # (unlike the Linux build, where the image determines the GLIBC floor).
+    runs-on: windows-latest
+    permissions:
+      contents: write
+
+    defaults:
+      run:
+        # "shell: bash" on Windows means Git Bash, not Cygwin bash, so the
+        # Cygwin bash has to be named explicitly. -o igncr tolerates any CR
+        # that sneaks into a generated script.
+        shell: C:\cygwin\bin\bash.exe --noprofile --norc -o igncr -eo pipefail '{0}'
+
+    steps:
+      # Must run before checkout: Configure and the support/ scripts are
+      # /bin/sh scripts and Cygwin will not run them with CRLF endings.
+      - name: Prevent CRLF checkout of shell scripts
+        shell: pwsh
+        run: git config --global core.autocrlf input
+
+      - name: Checkout repository
+        uses: actions/checkout@v7
+
+      - name: Install Cygwin and build dependencies
+        uses: cygwin/cygwin-install-action@v6
+        with:
+          # Pinned so the bash path in defaults.run.shell above is deterministic;
+          # the action would otherwise pick a work-volume-dependent directory.
+          install-dir: 'C:\cygwin'
+          # Package set per INSTALL, "Cygwin Stuff". X11 is needed only by
+          # dcdisp, but make World builds every subdirectory.
+          packages: >-
+            gcc-g++
+            binutils
+            make
+            imake
+            makedepend
+            libX11-devel
+            libXext-devel
+            zip
+
+      - name: Restore executable permissions on build scripts
+        run: chmod +x Configure config/Configure support/*
+
+      - name: Configure
+        run: ./Configure
+
+      # No -DDefineBinaryIOFlags here: Cygwin mounts are binary by default, so
+      # the default (text-mode) stream opens are already correct. A native
+      # MinGW/MSVC build would need that flag or it would corrupt pixel data.
+      - name: Run imake
+        run: imake -I./config -DInstallInTopDir
+
+      - name: Build
+        run: make World
+
+      - name: Install
+        run: make install
+
+      - name: Bundle Cygwin runtime DLLs
+        run: |
+          # Ship the Cygwin DLLs alongside the executables so the package runs
+          # on a machine without Cygwin installed (INSTALL, "Cygwin Stuff").
+          # Upstream's archive.winexe target hardcodes three DLLs; deriving them
+          # from cygcheck keeps the list correct as the toolchain moves.
+          PLATFORM_DIR=$(ls -1 bin | head -1)
+          echo "Platform directory: $PLATFORM_DIR"
+          cd "bin/$PLATFORM_DIR"
+
+          for exe in *.exe; do
+              cygcheck "./$exe"
+          done \
+            | tr -d '\r' \
+            | sed 's/^[[:space:]]*//' \
+            | grep -i '\.dll$' \
+            | sort -u \
+            | while read -r dll; do
+                  # A DLL that also lives in Cygwin's /usr/bin is part of the
+                  # Cygwin runtime; anything else is a Windows system DLL.
+                  base=$(basename "$(cygpath -u "$dll")")
+                  if [ -f "/usr/bin/$base" ]; then
+                      cp -fv "/usr/bin/$base" .
+                  fi
+              done
+
+          echo ""
+          echo "Package contents:"
+          ls -la
+
+      - name: Check binary dependencies
+        run: |
+          PLATFORM_DIR=$(ls -1 bin | head -1)
+
+          echo "Dependencies for dciodvfy:"
+          DEPS=$(cygcheck "bin/$PLATFORM_DIR/dciodvfy.exe" 2>&1)
+          printf '%s\n' "$DEPS"
+
+          # cygcheck reports an unresolvable import rather than exiting nonzero,
+          # so the message is the actual gate.
+          if printf '%s\n' "$DEPS" | grep -qi 'could not find'; then
+              echo "✗ Unresolved DLL dependencies"
+              exit 1
+          fi
+          echo "✓ All DLL dependencies resolve"
+
+      - name: Test binary execution
+        run: |
+          echo "Testing binary execution to ensure they work correctly..."
+
+          PLATFORM_DIR=$(ls -1 bin | head -1)
+          echo "Platform directory: $PLATFORM_DIR"
+
+          BINARIES="dciodvfy dcdump dcfile dcentvfy"
+
+          for binary in $BINARIES; do
+              BINARY_PATH="bin/$PLATFORM_DIR/$binary.exe"
+              if [ ! -f "$BINARY_PATH" ]; then
+                  echo "⚠ $binary not found at $BINARY_PATH"
+                  continue
+              fi
+
+              echo "Testing $binary..."
+              # These tools read stdin when given no file, so close it. A nonzero
+              # exit from a usage message is expected; a failure to load the image
+              # is what the cygcheck step above catches.
+              "$BINARY_PATH" </dev/null 2>&1 | head -5 || true
+              echo "✓ $binary executed successfully"
+          done
+
+          echo "All binary execution tests passed!"
+
+      - name: Package binaries
+        run: |
+          PLATFORM_DIR=$(ls -1 bin | head -1)
+          echo "Platform directory: $PLATFORM_DIR"
+
+          # zip rather than tar.gz: this one is unpacked on Windows.
+          cd "bin/$PLATFORM_DIR"
+          zip -r ../../dicom3tools-windows-x86_64.zip .
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v7
+        with:
+          name: dicom3tools-windows-x86_64
+          path: dicom3tools-windows-x86_64.zip
+          retention-days: 90
+
+      - name: Attach to release
+        if: github.event_name == 'release'
+        uses: softprops/action-gh-release@v3
+        with:
+          files: dicom3tools-windows-x86_64.zip
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
