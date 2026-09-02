@@ -55,6 +55,31 @@ jobs:
       - name: Install
         run: script -q /dev/null make install
 
+      - name: Check build completeness
+        # `make World` returns 0 even when a subdirectory fails - a broken
+        # dconvert build reports "Error 2" and the top level make still exits 0
+        # - so neither build step above can be trusted to have built
+        # everything. himrtodc, himrdump, ge9800todc and ge9800dump are the
+        # canaries for the /dev/tty problem described on the Build step: they
+        # are exactly what goes missing when the awk header generation runs
+        # without a controlling terminal, and without this check a package
+        # short of them would ship silently.
+        run: |
+          PLATFORM_DIR=$(ls -1 bin | head -1)
+          echo "Platform directory: $PLATFORM_DIR"
+          echo "Programs built: $(ls -1 "bin/$PLATFORM_DIR" | wc -l)"
+
+          MISSING=""
+          for program in dciodvfy dcdump dcfile dcentvfy dcdisp \
+                         himrtodc himrdump ge9800todc ge9800dump; do
+              [ -f "bin/$PLATFORM_DIR/$program" ] || MISSING="$MISSING $program"
+          done
+          if [ -n "$MISSING" ]; then
+              echo "✗ incomplete build, missing:$MISSING"
+              exit 1
+          fi
+          echo "✓ all required programs present"
+
       - name: Test binary execution
         run: |
           echo "Testing binary execution to ensure they work correctly..."
