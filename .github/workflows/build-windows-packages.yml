@@ -182,6 +182,13 @@ jobs:
           PLATFORM_DIR=$(ls -1 bin | head -1)
           echo "Platform directory: $PLATFORM_DIR"
 
+          # The license has to travel with the binaries it covers, and
+          # VERSION.txt records which upstream snapshot they were built from,
+          # which the archive otherwise has no way of saying. Copied here
+          # rather than earlier because every check above walks this directory
+          # expecting programs; adding them last keeps the change inert.
+          cp COPYRIGHT VERSION.txt "bin/$PLATFORM_DIR/"
+
           # zip rather than tar.gz: this one is unpacked on Windows.
           cd "bin/$PLATFORM_DIR"
           zip -r ../../dicom3tools-windows-x86_64.zip .

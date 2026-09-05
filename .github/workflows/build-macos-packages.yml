@@ -182,7 +182,13 @@ jobs:
               fi
           done
 
+          # The license has to travel with the binaries it covers, and
+          # VERSION.txt records which upstream snapshot they were built from,
+          # which the archive otherwise has no way of saying. Copied into the
+          # staging directories rather than into $SRC so the lipo loop above
+          # never sees them.
           for a in universal arm64 x86_64; do
+              cp COPYRIGHT VERSION.txt "pkg/$a/"
               (cd "pkg/$a" && COPYFILE_DISABLE=1 tar -czf "../../dicom3tools-macos-$a.tar.gz" .)
           done
           ls -lh dicom3tools-macos-*.tar.gz
